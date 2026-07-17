@@ -2,6 +2,7 @@ services:
   - type: web
     name: techverse-api
     env: node
+    plan: free
     buildCommand: pnpm install && pnpm build
     startCommand: node apps/api/dist/server.js
     envVars:

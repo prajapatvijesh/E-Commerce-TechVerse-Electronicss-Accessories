@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <!-- Premium Dark Gradient Background -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+    
+    <!-- Neon Blue/Cyan Gradient for the Logo (Web App) -->
+    <linearGradient id="logoGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f2fe" />
+      <stop offset="100%" stop-color="#4facfe" />
+    </linearGradient>
+
+    <!-- Outer Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="15" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Squircle Background -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)" />
+  
+  <!-- Outer Glow of the logo -->
+  <path d="M 126 170 L 386 170 C 400 170 410 180 410 194 L 410 216 C 410 230 400 240 386 240 L 310 240 L 270 360 C 265 375 247 375 242 360 L 202 240 L 126 240 C 112 240 102 230 102 216 L 102 194 C 102 180 112 170 126 170 Z" fill="url(#logoGrad)" filter="url(#glow)" opacity="0.5"/>
+
+  <!-- Main Logo Body -->
+  <path d="M 126 170 L 386 170 C 400 170 410 180 410 194 L 410 216 C 410 230 400 240 386 240 L 310 240 L 270 360 C 265 375 247 375 242 360 L 202 240 L 126 240 C 112 240 102 230 102 216 L 102 194 C 102 180 112 170 126 170 Z" fill="url(#logoGrad)"/>
+
+  <!-- Inner Glass highlight for 3D effect -->
+  <path d="M 126 172 L 386 172 C 398 172 408 181 408 194 L 408 200 C 408 187 398 178 386 178 L 126 178 C 114 178 104 187 104 200 L 104 194 C 104 181 114 172 126 172 Z" fill="#ffffff" opacity="0.6"/>
+  
+  <!-- Sleek Cutout line -->
+  <path d="M 160 205 L 352 205" stroke="#0f172a" stroke-width="12" stroke-linecap="round" />
+</svg>

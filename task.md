@@ -1,0 +1,26 @@
+- `[x]` **Phase 1: Foundation & Monorepo Setup**
+- `[x]` **Phase 2: Packages Setup**
+- `[x]` **Phase 3: Backend API Setup (`apps/api`) Models**
+- `[x]` **Phase 4: Core API Development (Auth, Products, Orders)**
+- `[x]` **Phase 4.1: Extended API Development**
+  - Vendor API (Approvals, Profile)
+  - Category & Brand APIs
+  - Cart & Wishlist APIs
+  - Coupon & Review APIs
+  - CMS & Settings APIs
+  - Notifications & Analytics APIs
+- `[x]` **Phase 5: Admin & Vendor Dashboard (`apps/admin`)**
+  - Complete UI Components
+  - Products CRUD UI
+  - Categories & Brands UI
+  - Orders & Analytics UI
+  - Settings & CMS Builder
+- `[x]` **Phase 6: Customer Website (`apps/web`)**
+  - Advanced Home Page & Shop filtering
+  - Product Details, Reviews, Q&A
+  - Cart, Checkout (Demo payment), Wishlist
+  - User Dashboard (Profile, Orders, Invoice PDF)
+- `[x]` **Phase 7: Final Integration & Tests**
+  - PDF Generation for invoices
+  - Backend Unit Tests
+  - Frontend Unit Tests

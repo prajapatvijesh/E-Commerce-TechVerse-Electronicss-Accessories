@@ -43,7 +43,7 @@ export const ChatWidget: React.FC = () => {
 
   useEffect(() => {
     if (isOpen && user) {
-      const newSocket = io((import.meta as any).env.VITE_API_URL || 'http://localhost:5000', {
+      const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
         withCredentials: true,
       });
       setSocket(newSocket);

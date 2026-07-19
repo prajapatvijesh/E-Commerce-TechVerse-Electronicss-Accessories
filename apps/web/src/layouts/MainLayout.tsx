@@ -157,7 +157,7 @@ export const MainLayout: React.FC = () => {
                 </Link>
               )}
               <button 
-                className="sm:hidden p-2 text-gray-600 dark:text-gray-300"
+                className="lg:hidden p-2 text-gray-600 dark:text-gray-300"
                 onClick={() => setIsMobileMenuOpen(true)}
               >
                 <Menu size={24} />
@@ -169,7 +169,7 @@ export const MainLayout: React.FC = () => {
 
       {/* Mobile Menu Drawer */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm sm:hidden transition-opacity">
+        <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm lg:hidden transition-opacity">
           <div className="fixed inset-y-0 right-0 w-4/5 max-w-sm bg-white dark:bg-dark-800 shadow-2xl p-6 flex flex-col transform transition-transform duration-300 ease-in-out translate-x-0">
             <div className="flex items-center justify-between mb-8">
               <span className="text-2xl font-bold text-primary-600 tracking-tighter">TechVerse</span>

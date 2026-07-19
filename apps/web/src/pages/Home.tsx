@@ -1,18 +1,20 @@
 import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { Button, Badge } from '@techverse/ui';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { addToCart } from '../store/slices/cartSlice';
-import { ShoppingCart, Star, Award, Mail, ArrowRight, Quote } from 'lucide-react';
+import { ShoppingCart, Star, Award, Mail, ArrowRight, Quote, ChevronDown } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
 export const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
 
 export const Home: React.FC = () => {
   const dispatch = useDispatch();
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['products', 'trending'],
@@ -317,10 +319,38 @@ export const Home: React.FC = () => {
           </div>
           <div className="max-w-3xl mx-auto space-y-4">
             {cmsData.faqs.map((faq: any, idx: number) => (
-              <div key={idx} className="bg-gray-50 dark:bg-dark-900 rounded-xl p-6">
-                <h3 className="font-bold text-lg dark:text-white mb-2">{faq.question}</h3>
-                <p className="text-gray-600 dark:text-gray-400">{faq.answer}</p>
-              </div>
+              <motion.div 
+                key={idx} 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 * idx }}
+                className="bg-gray-50 dark:bg-dark-900 rounded-2xl border border-gray-100 dark:border-dark-700/50 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+              >
+                <button
+                  className="w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                  onClick={() => setOpenFaqIndex(openFaqIndex === idx ? null : idx)}
+                >
+                  <h3 className="font-bold text-lg text-gray-900 dark:text-white pr-4">{faq.question}</h3>
+                  <ChevronDown 
+                    className={`w-6 h-6 text-primary-500 transition-transform duration-300 flex-shrink-0 ${openFaqIndex === idx ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                <AnimatePresence>
+                  {openFaqIndex === idx && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                    >
+                      <div className="px-6 pb-5 text-gray-600 dark:text-gray-400 leading-relaxed border-t border-gray-200 dark:border-dark-700/50 pt-4 mt-2 mx-2">
+                        {faq.answer}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             ))}
           </div>
         </section>

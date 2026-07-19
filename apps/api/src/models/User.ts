@@ -18,7 +18,10 @@ export interface IUser extends Document {
   wishlist?: mongoose.Types.ObjectId[];
   isEmailVerified: boolean;
   isActive: boolean;
+  resetPasswordToken?: string;
+  resetPasswordExpire?: Date;
   matchPassword(enteredPassword: string): Promise<boolean>;
+  getResetPasswordToken(): string;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -43,6 +46,8 @@ const UserSchema = new Schema<IUser>(
     wishlist: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
     isEmailVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
   { timestamps: true }
 );
@@ -58,6 +63,24 @@ UserSchema.pre('save', async function (next) {
 UserSchema.methods.matchPassword = async function (enteredPassword: string) {
   if (!this.password) return false;
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+import crypto from 'crypto';
+
+UserSchema.methods.getResetPasswordToken = function () {
+  // Generate token
+  const resetToken = crypto.randomBytes(20).toString('hex');
+
+  // Hash token and set to resetPasswordToken field
+  this.resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  // Set expire (10 minutes)
+  this.resetPasswordExpire = new Date(Date.now() + 10 * 60 * 1000);
+
+  return resetToken;
 };
 
 export const User = mongoose.model<IUser>('User', UserSchema);

@@ -13,6 +13,8 @@ import { Checkout } from './pages/Checkout';
 import { Dashboard } from './pages/Dashboard';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import { Compare } from './pages/Compare';
 import { Wishlist } from './pages/Wishlist';
 import { Contact } from './pages/Contact';
@@ -53,6 +55,8 @@ function App() {
               <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
               <Route path="/" element={<MainLayout />}>
                 <Route index element={<Home />} />
                 <Route path="shop" element={<Shop />} />

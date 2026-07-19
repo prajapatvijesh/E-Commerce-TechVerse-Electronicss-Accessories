@@ -165,7 +165,7 @@ export const Checkout: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-8">
           {/* Shipping Form */}
-          <div className="bg-white dark:bg-dark-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-dark-700">
+          <div className="bg-white/70 backdrop-blur-md dark:bg-dark-800/70 p-8 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgb(0,0,0,0.2)] border border-white/40 dark:border-dark-700/50">
             <h2 className="text-xl font-semibold dark:text-white mb-4">Shipping Address</h2>
             <form className="space-y-4" onSubmit={submitHandler}>
               <Input 
@@ -218,7 +218,7 @@ export const Checkout: React.FC = () => {
           </div>
 
           {/* Payment Method */}
-          <div className="bg-white dark:bg-dark-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-dark-700">
+          <div className="bg-white/70 backdrop-blur-md dark:bg-dark-800/70 p-8 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgb(0,0,0,0.2)] border border-white/40 dark:border-dark-700/50">
             <h2 className="text-xl font-semibold dark:text-white mb-4">Payment Method</h2>
             <div className="space-y-2">
               <label className="flex items-center space-x-3 text-sm dark:text-gray-300">
@@ -246,7 +246,7 @@ export const Checkout: React.FC = () => {
         </div>
 
         {/* Order Summary */}
-        <div className="bg-white dark:bg-dark-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-dark-700 h-fit">
+        <div className="bg-white/80 backdrop-blur-xl dark:bg-dark-800/80 p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-white/40 dark:border-dark-700/50 h-fit sticky top-28">
           <h2 className="text-xl font-bold dark:text-white mb-6">Order Summary</h2>
           <div className="space-y-4 text-sm text-gray-600 dark:text-gray-300 mb-6 border-b border-gray-100 dark:border-dark-700 pb-6">
             {cartItems.map((item) => (
@@ -274,9 +274,9 @@ export const Checkout: React.FC = () => {
                 <span className="font-semibold">-₹{discountAmount.toFixed(2)}</span>
               </div>
             )}
-            <div className="border-t border-gray-200 dark:border-dark-700 pt-4 flex justify-between text-lg font-bold text-gray-900 dark:text-white">
-              <span>Total</span>
-              <span>₹{(itemsPrice - discountAmount + 0 + Number((0.15 * (itemsPrice - discountAmount)).toFixed(2))).toFixed(2)}</span>
+            <div className="border-t border-gray-200/50 dark:border-dark-700/50 pt-6 mt-6 flex justify-between items-end">
+              <span className="text-lg font-bold text-gray-900 dark:text-white">Total</span>
+              <span className="text-3xl font-extrabold text-primary-600 dark:text-primary-400 tracking-tight">₹{(itemsPrice - discountAmount + 0 + Number((0.15 * (itemsPrice - discountAmount)).toFixed(2))).toFixed(2)}</span>
             </div>
           </div>
           
@@ -303,10 +303,17 @@ export const Checkout: React.FC = () => {
                 </Button>
               )}
             </div>
+            <Button 
+              variant="primary" 
+              className="w-full mt-8 rounded-2xl h-14 text-lg shadow-[0_8px_25px_rgba(16,185,129,0.3)] hover:shadow-[0_12px_35px_rgba(16,185,129,0.4)] hover:-translate-y-1 transition-all" 
+              size="lg" 
+              type="submit" 
+              disabled={orderMutation.isPending} 
+              onClick={submitHandler}
+            >
+              {orderMutation.isPending ? 'Processing...' : 'Place Order & Pay'}
+            </Button>
           </div>
-          <Button variant="primary" className="w-full mt-6" size="lg" onClick={submitHandler} disabled={orderMutation.isPending}>
-            {orderMutation.isPending ? 'Placing Order...' : 'Place Order'}
-          </Button>
         </div>
       </div>
     </div>

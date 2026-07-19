@@ -39,56 +39,57 @@ export const Cart: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
             {cartItems.map((item) => (
-              <div key={item.product} className="flex flex-col sm:flex-row items-center bg-white dark:bg-dark-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-dark-700 gap-4">
-                <div className="w-24 h-24 bg-gray-100 dark:bg-dark-700 rounded-md flex-shrink-0 overflow-hidden">
+              <div key={item.product} className="flex flex-col sm:flex-row items-center bg-white/70 backdrop-blur-md dark:bg-dark-800/70 p-5 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgb(0,0,0,0.2)] border border-white/40 dark:border-dark-700/50 gap-6 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.3)] transition-all">
+                <div className="w-28 h-28 bg-gray-50 dark:bg-dark-900/50 rounded-xl flex-shrink-0 overflow-hidden mix-blend-multiply dark:mix-blend-normal">
                   {item.image ? (
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    <img src={item.image} alt={item.name} className="w-full h-full object-contain p-2 hover:scale-110 transition-transform duration-500" />
                   ) : (
                     <span className="text-xs text-gray-400 flex items-center justify-center h-full">No Img</span>
                   )}
                 </div>
                 <div className="flex-1 text-center sm:text-left">
-                  <Link to={`/product/${item.product}`} className="font-semibold text-gray-900 dark:text-white hover:text-primary-600 transition-colors">
+                  <Link to={`/product/${item.product}`} className="font-bold text-lg text-gray-900 dark:text-white hover:text-primary-600 transition-colors">
                     {item.name}
                   </Link>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white mt-1">₹{item.price.toFixed(2)}</p>
+                  <p className="text-xl font-extrabold text-primary-600 dark:text-primary-400 mt-2">₹{item.price.toFixed(2)}</p>
                 </div>
-                <div className="flex items-center space-x-4">
-                  <span className="text-sm dark:text-gray-300">Qty: {item.qty}</span>
+                <div className="flex flex-col sm:items-end space-y-3">
+                  <span className="text-sm font-medium bg-gray-100 dark:bg-dark-700 px-3 py-1 rounded-lg dark:text-gray-300">Qty: {item.qty}</span>
                   <button 
                     onClick={() => handleRemove(item.product)}
-                    className="text-red-500 hover:text-red-700 transition-colors p-2"
+                    className="text-red-500 hover:text-white hover:bg-red-500 transition-colors p-2 rounded-lg group"
+                    title="Remove Item"
                   >
-                    <Trash2 size={20} />
+                    <Trash2 size={20} className="group-hover:scale-110 transition-transform" />
                   </button>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="bg-white dark:bg-dark-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-dark-700 h-fit">
-            <h2 className="text-xl font-bold dark:text-white mb-6">Order Summary</h2>
-            <div className="space-y-4 text-sm text-gray-600 dark:text-gray-300">
-              <div className="flex justify-between">
-                <span>Subtotal ({cartItems.reduce((acc, item) => acc + item.qty, 0)} items)</span>
-                <span className="font-semibold dark:text-white">
+          <div className="bg-white/80 backdrop-blur-xl dark:bg-dark-800/80 p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-white/40 dark:border-dark-700/50 h-fit sticky top-28">
+            <h2 className="text-2xl font-bold dark:text-white mb-8 tracking-tight">Order Summary</h2>
+            <div className="space-y-5 text-sm text-gray-600 dark:text-gray-400">
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Subtotal ({cartItems.reduce((acc, item) => acc + item.qty, 0)} items)</span>
+                <span className="font-bold text-gray-900 dark:text-white text-base">
                   ₹{cartItems.reduce((acc, item) => acc + item.qty * item.price, 0).toFixed(2)}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span>Shipping</span>
-                <span className="font-semibold dark:text-white text-green-500">Free</span>
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Shipping</span>
+                <span className="font-bold text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded-md">Free</span>
               </div>
-              <div className="flex justify-between">
-                <span>Tax</span>
-                <span className="font-semibold dark:text-white">Calculated at checkout</span>
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Tax</span>
+                <span className="font-semibold text-gray-900 dark:text-white">Calculated at checkout</span>
               </div>
-              <div className="border-t border-gray-200 dark:border-dark-700 pt-4 flex justify-between text-lg font-bold text-gray-900 dark:text-white">
-                <span>Total</span>
-                <span>₹{cartItems.reduce((acc, item) => acc + item.qty * item.price, 0).toFixed(2)}</span>
+              <div className="border-t border-gray-200/50 dark:border-dark-700/50 pt-6 mt-6 flex justify-between items-end">
+                <span className="text-lg font-bold text-gray-900 dark:text-white">Total</span>
+                <span className="text-3xl font-extrabold text-primary-600 dark:text-primary-400 tracking-tight">₹{cartItems.reduce((acc, item) => acc + item.qty * item.price, 0).toFixed(2)}</span>
               </div>
             </div>
-            <Button variant="primary" className="w-full mt-6" size="lg" onClick={checkoutHandler}>
+            <Button variant="primary" className="w-full mt-8 rounded-2xl h-14 text-lg shadow-[0_8px_25px_rgba(16,185,129,0.3)] hover:shadow-[0_12px_35px_rgba(16,185,129,0.4)] hover:-translate-y-1 transition-all" size="lg" onClick={checkoutHandler}>
               Proceed to Checkout
             </Button>
           </div>

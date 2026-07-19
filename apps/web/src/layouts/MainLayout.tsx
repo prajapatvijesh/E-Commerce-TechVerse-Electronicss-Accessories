@@ -56,10 +56,11 @@ export const MainLayout: React.FC = () => {
       </div>
       
       {/* Header */}
-      <header className="bg-white/80 dark:bg-dark-800/80 backdrop-blur-lg border-b border-gray-100 dark:border-dark-700/50 sticky top-0 z-50 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            {/* Logo & Main Nav */}
+      <header className="sticky top-4 z-50 mx-4 sm:mx-6 lg:mx-auto max-w-7xl mb-8 transition-all duration-300">
+        <div className="bg-white/70 dark:bg-dark-800/70 backdrop-blur-xl border border-white/40 dark:border-dark-700/50 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)]">
+          <div className="px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between h-16 items-center">
+              {/* Logo & Main Nav */}
             <div className="flex items-center space-x-4 lg:space-x-8">
               {location.pathname !== '/' && (
                 <button 
@@ -74,12 +75,12 @@ export const MainLayout: React.FC = () => {
                 <span className="text-2xl font-bold text-primary-600 tracking-tighter">TechVerse</span>
               </Link>
               <nav className="hidden lg:flex items-center space-x-6 text-sm font-medium text-gray-700 dark:text-gray-300">
-                <Link to="/" className="hover:text-primary-600 transition-colors" onClick={() => window.scrollTo(0, 0)}>{t('home')}</Link>
-                <Link to="/shop" className="hover:text-primary-600 transition-colors">{t('shop')}</Link>
-                <Link to="/vendors" className="hover:text-primary-600 transition-colors">{t('vendors')}</Link>
-                <Link to="/offers" className="hover:text-primary-600 transition-colors">Offers</Link>
-                <Link to="/about" className="hover:text-primary-600 transition-colors">About</Link>
-                <Link to="/contact" className="hover:text-primary-600 transition-colors">Contact</Link>
+                <Link to="/" className="hover:text-primary-600 transition-colors font-semibold" onClick={() => window.scrollTo(0, 0)}>{t('home')}</Link>
+                <Link to="/shop" className="hover:text-primary-600 transition-colors font-semibold">{t('shop')}</Link>
+                <Link to="/vendors" className="hover:text-primary-600 transition-colors font-semibold">{t('vendors')}</Link>
+                <Link to="/offers" className="hover:text-primary-600 transition-colors font-semibold">Offers</Link>
+                <Link to="/about" className="hover:text-primary-600 transition-colors font-semibold">About</Link>
+                <Link to="/contact" className="hover:text-primary-600 transition-colors font-semibold">Contact</Link>
               </nav>
             </div>
 
@@ -100,7 +101,7 @@ export const MainLayout: React.FC = () => {
                   type="text"
                   name="search"
                   placeholder={t('search_placeholder')}
-                  className="w-full bg-gray-100 dark:bg-dark-700 border-transparent focus:bg-white dark:focus:bg-dark-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500 rounded-lg pl-10 pr-4 py-2 text-sm dark:text-white"
+                  className="w-full bg-white/50 dark:bg-dark-900/50 backdrop-blur-sm border border-gray-200/50 dark:border-dark-700/50 focus:bg-white dark:focus:bg-dark-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 rounded-xl pl-10 pr-4 py-2 text-sm dark:text-white transition-all shadow-inner"
                 />
                 <button type="submit" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-500">
                   <Search size={18} />
@@ -113,18 +114,18 @@ export const MainLayout: React.FC = () => {
 
               {user && <NotificationDropdown />}
 
-              <Link to="/wishlist" className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 transition-colors hidden sm:block">
-                <Heart size={24} />
+              <Link to="/wishlist" className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all hidden sm:block">
+                <Heart size={22} />
                 {wishlistItemsCount > 0 && (
-                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white transform translate-x-1/4 -translate-y-1/4 bg-gradient-to-r from-red-500 to-pink-500 rounded-full shadow-sm">
                     {wishlistItemsCount}
                   </span>
                 )}
               </Link>
-              <Link to="/cart" className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 transition-colors">
-                <ShoppingCart size={24} />
+              <Link to="/cart" className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all">
+                <ShoppingCart size={22} />
                 {cartItems.length > 0 && (
-                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white transform translate-x-1/4 -translate-y-1/4 bg-gradient-to-r from-primary-500 to-emerald-400 rounded-full shadow-sm">
                     {cartItems.length}
                   </span>
                 )}
@@ -157,13 +158,14 @@ export const MainLayout: React.FC = () => {
                 </Link>
               )}
               <button 
-                className="lg:hidden p-2 text-gray-600 dark:text-gray-300"
-                onClick={() => setIsMobileMenuOpen(true)}
+                className="lg:hidden p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-xl transition-colors"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
-                <Menu size={24} />
+                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
             </div>
           </div>
+        </div>
         </div>
       </header>
 

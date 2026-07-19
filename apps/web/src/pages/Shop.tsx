@@ -175,10 +175,12 @@ export const Shop: React.FC = () => {
 
       {/* Filters Sidebar */}
       <aside className="w-full md:w-72 shrink-0">
-        <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-dark-700/50 sticky top-24">
-          <div className="flex items-center space-x-2 mb-6 pb-4 border-b border-gray-100 dark:border-dark-700/50">
-            <SlidersHorizontal size={20} className="text-primary-600" />
-            <h3 className="font-bold text-lg dark:text-white">Filters</h3>
+        <div className="bg-white/60 backdrop-blur-xl dark:bg-dark-800/60 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-white/40 dark:border-dark-700/50 sticky top-28">
+          <div className="flex items-center space-x-3 mb-6 pb-4 border-b border-gray-200/50 dark:border-dark-700/50">
+            <div className="p-2 bg-primary-50 dark:bg-primary-900/20 rounded-xl">
+              <SlidersHorizontal size={20} className="text-primary-600" />
+            </div>
+            <h3 className="font-bold text-lg dark:text-white tracking-tight">Filters</h3>
           </div>
           
           <div className="space-y-6">
@@ -320,7 +322,7 @@ export const Shop: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: i * 0.05 }}
                   key={product._id} 
-                  className="bg-white dark:bg-dark-800 rounded-2xl p-5 border border-gray-100 dark:border-dark-700/50 flex flex-col group hover:shadow-2xl hover:shadow-primary-500/10 transition-all duration-500 h-full relative"
+                  className="bg-white/70 backdrop-blur-md dark:bg-dark-800/70 rounded-[2rem] p-5 border border-white/40 dark:border-dark-700/50 flex flex-col group shadow-sm hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_15px_40px_rgba(0,0,0,0.3)] transition-all duration-300 h-full relative"
                 >
                   <div className="absolute top-7 right-7 z-10 flex flex-col space-y-2">
                     <button 
@@ -351,14 +353,14 @@ export const Shop: React.FC = () => {
                     </button>
                   </div>
 
-                  <Link to={`/product/${product.slug}`} className="aspect-square bg-gray-50 dark:bg-dark-900 rounded-xl mb-5 overflow-hidden flex items-center justify-center relative">
+                  <Link to={`/product/${product.slug}`} className="relative h-56 bg-gray-50/50 dark:bg-dark-900/50 rounded-2xl mb-5 overflow-hidden flex items-center justify-center mix-blend-multiply dark:mix-blend-normal">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <img 
-                      src={product.thumbnail || FALLBACK_IMAGE} 
+                      src={product.thumbnail || product.images?.[0] || FALLBACK_IMAGE} 
                       alt={product.name} 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                      className="max-h-full object-contain group-hover:scale-110 transition-transform duration-700 ease-out drop-shadow-sm group-hover:drop-shadow-xl"
                       onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE; }}
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
                   </Link>
 
                   <div className="mt-auto flex flex-col flex-1">
@@ -379,12 +381,12 @@ export const Shop: React.FC = () => {
                       </div>
                       <Button 
                         variant="primary" 
-                        size="sm" 
-                        onClick={(e) => handleAddToCart(product, e)} 
-                        disabled={product.stock === 0}
-                        className="rounded-full w-10 h-10 p-0 flex items-center justify-center hover:scale-110 transition-transform shadow-md shadow-primary-500/20 disabled:hover:scale-100"
+                        size="sm"
+                        onClick={(e) => handleAddToCart(product, e)}
+                        className="rounded-xl shadow-[0_5px_15px_rgba(16,185,129,0.3)] hover:shadow-[0_8px_25px_rgba(16,185,129,0.4)] hover:-translate-y-0.5 transition-all"
                       >
-                        {product.stock === 0 ? <span className="text-xs px-2">Out</span> : <ShoppingCart size={18} />}
+                        <ShoppingCart size={16} className="mr-1" />
+                        Add
                       </Button>
                     </div>
                   </div>

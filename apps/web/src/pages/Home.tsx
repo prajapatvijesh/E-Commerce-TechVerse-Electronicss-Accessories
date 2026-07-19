@@ -125,10 +125,10 @@ export const Home: React.FC = () => {
 
       {/* Featured Categories (Glassmorphism) */}
       <section>
-        <div className="flex justify-between items-end mb-8">
+        <div className="flex justify-between items-end mb-8 relative z-10">
           <div>
-            <h2 className="text-3xl font-extrabold dark:text-white tracking-tight">Shop by Category</h2>
-            <p className="text-gray-500 mt-2">Find exactly what you're looking for.</p>
+            <h2 className="text-3xl font-extrabold dark:text-white tracking-tight">Trending Products</h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-2">Discover what's popular right now.</p>
           </div>
           <Link to="/shop" className="text-primary-600 hover:text-primary-500 hover:underline font-medium flex items-center space-x-1">
             <span>View All</span>
@@ -145,7 +145,7 @@ export const Home: React.FC = () => {
               key={i} 
             >
               <Link to={`/shop?category=${category.slug}`} className="group block h-full">
-                <div className="h-full bg-white/80 backdrop-blur-sm dark:bg-dark-800/90 rounded-[2rem] p-8 border border-gray-100/50 dark:border-dark-700/30 text-center hover:shadow-2xl hover:shadow-primary-500/10 hover:-translate-y-2 transition-all duration-500 relative overflow-hidden flex flex-col justify-center items-center">
+                <div className="h-full bg-white/60 backdrop-blur-xl dark:bg-dark-800/60 rounded-[2rem] p-8 border border-white/40 dark:border-dark-600/30 text-center hover:shadow-[0_20px_50px_rgba(16,185,129,0.15)] dark:hover:shadow-[0_20px_50px_rgba(16,185,129,0.05)] hover:-translate-y-2 transition-all duration-500 relative overflow-hidden flex flex-col justify-center items-center">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   <div className="h-24 w-24 mx-auto bg-gradient-to-br from-gray-50 to-gray-100 dark:from-dark-700 dark:to-dark-800 rounded-[2rem] mb-6 group-hover:scale-110 group-hover:-rotate-6 transition-all duration-500 flex items-center justify-center shadow-inner relative z-10 group-hover:shadow-primary-500/20">
                     <span className="text-4xl filter drop-shadow-sm">{getCategoryIcon(category.slug)}</span>
@@ -183,17 +183,18 @@ export const Home: React.FC = () => {
                 transition={{ duration: 0.6, delay: i * 0.1, type: "spring", stiffness: 100 }}
                 key={product._id} 
               >
-                <div className="bg-white/80 backdrop-blur-md dark:bg-dark-800/90 rounded-[2rem] p-5 border border-gray-100/50 dark:border-dark-700/30 flex flex-col group hover:shadow-2xl hover:shadow-primary-500/10 hover:-translate-y-2 transition-all duration-500 h-full relative">
-                  <Link to={`/product/${product.slug}`} className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 dark:from-dark-900 dark:to-dark-950 rounded-2xl mb-5 overflow-hidden flex items-center justify-center relative">
-                    <img 
-                      src={product.thumbnail || FALLBACK_IMAGE} 
-                      alt={product.name} 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                      onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE; }}
-                    />
+                <div className="bg-white/70 backdrop-blur-md dark:bg-dark-800/70 border border-white/40 dark:border-dark-700/50 rounded-2xl overflow-hidden shadow-sm hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_15px_40px_rgba(0,0,0,0.3)] transition-all duration-300 group">
+                  <Link to={`/product/${product.slug}`} className="relative h-64 overflow-hidden bg-gray-50 dark:bg-dark-900/50 p-6 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <img 
+                        src={product.thumbnail || product.images?.[0] || FALLBACK_IMAGE} 
+                        alt={product.name}
+                        className="max-h-full object-contain group-hover:scale-110 transition-transform duration-700 ease-out drop-shadow-md group-hover:drop-shadow-xl"
+                        onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE; }}
+                      />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
                   </Link>
-                  <div className="mt-auto flex flex-col flex-1">
+                  <div className="mt-auto flex flex-col flex-1 p-5">
                     <span className="text-xs font-semibold text-primary-600 uppercase tracking-wider mb-2">{product.brand?.name || 'Brand'}</span>
                     <h3 className="font-bold text-gray-900 dark:text-white mb-1 line-clamp-2 text-lg leading-tight group-hover:text-primary-600 transition-colors">
                       <Link to={`/product/${product.slug}`}>{product.name}</Link>

@@ -171,19 +171,20 @@ export const ProductDetails: React.FC = () => {
           transition={{ duration: 0.6 }}
           className="space-y-4"
         >
-          <div className="bg-white dark:bg-dark-800 aspect-square rounded-3xl overflow-hidden border border-gray-100 dark:border-dark-700/50 p-8 flex items-center justify-center shadow-xl shadow-gray-200/50 dark:shadow-none group relative">
+          <div className="bg-white/60 backdrop-blur-xl dark:bg-dark-800/60 aspect-square rounded-[2rem] overflow-hidden border border-white/40 dark:border-dark-700/50 p-8 flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-none group relative">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <img 
               src={product.thumbnail || FALLBACK_IMAGE} 
               alt={product.name} 
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+              className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700 drop-shadow-md group-hover:drop-shadow-2xl" 
               onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE; }}
             />
           </div>
           {product.images && product.images.length > 0 && (
             <div className="grid grid-cols-4 gap-4">
                {product.images.slice(0,4).map((img: string, idx: number) => (
-                 <div key={idx} className="aspect-square rounded-xl overflow-hidden border border-gray-200 dark:border-dark-700 cursor-pointer hover:border-primary-500 transition-colors">
-                   <img src={img} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE; }}/>
+                 <div key={idx} className="aspect-square bg-white/60 backdrop-blur-md dark:bg-dark-800/60 rounded-2xl overflow-hidden border border-white/40 dark:border-dark-700/50 cursor-pointer hover:border-primary-500 hover:shadow-lg hover:-translate-y-1 transition-all">
+                   <img src={img} alt="" className="w-full h-full object-contain p-2" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE; }}/>
                  </div>
                ))}
             </div>
@@ -270,7 +271,7 @@ export const ProductDetails: React.FC = () => {
               <Button 
                 variant="primary" 
                 size="lg" 
-                className="flex-1 flex justify-center items-center space-x-2 h-14 text-lg rounded-xl shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 transition-shadow" 
+                className="flex-1 flex justify-center items-center space-x-2 h-14 text-lg rounded-2xl shadow-[0_8px_25px_rgba(16,185,129,0.3)] hover:shadow-[0_12px_35px_rgba(16,185,129,0.4)] hover:-translate-y-1 transition-all" 
                 onClick={onAddToCartClick} 
                 disabled={product.stock === 0}
               >
@@ -280,7 +281,7 @@ export const ProductDetails: React.FC = () => {
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="flex-1 flex justify-center items-center h-14 text-lg rounded-xl border-2 border-primary-600 text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all" 
+                className="flex-1 flex justify-center items-center h-14 text-lg rounded-2xl border-2 border-primary-600 text-primary-600 bg-transparent hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:-translate-y-1 transition-all" 
                 onClick={handleBuyNow} 
                 disabled={product.stock === 0}
               >

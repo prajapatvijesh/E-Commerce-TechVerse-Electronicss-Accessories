@@ -20,6 +20,7 @@ export interface IUser extends Document {
   isActive: boolean;
   resetPasswordToken?: string;
   resetPasswordExpire?: Date;
+  googleId?: string;
   matchPassword(enteredPassword: string): Promise<boolean>;
   getResetPasswordToken(): string;
 }
@@ -29,6 +30,7 @@ const UserSchema = new Schema<IUser>(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, select: false },
+    googleId: { type: String, sparse: true, unique: true },
     role: {
       type: String,
       enum: ['customer', 'vendor', 'admin', 'superadmin'],

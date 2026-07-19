@@ -11,6 +11,7 @@ import { ProductDetails } from './pages/ProductDetails';
 import { Cart } from './pages/Cart';
 import { Checkout } from './pages/Checkout';
 import { Dashboard } from './pages/Dashboard';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -44,13 +45,16 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 function App() {
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'dummy-client-id';
+
   return (
     <ErrorBoundary>
       <LanguageProvider>
         <HelmetProvider>
           <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              <Router>
+            <GoogleOAuthProvider clientId={clientId}>
+              <QueryClientProvider client={queryClient}>
+                <Router>
                 <ScrollToTop />
               <Routes>
               <Route path="/login" element={<Login />} />
@@ -78,10 +82,11 @@ function App() {
                 <Route path="page/:slug" element={<CMSPage />} />
               </Route>
             </Routes>
-            <ChatWidget />
-            </Router>
-          </QueryClientProvider>
-        </Provider>
+                <ChatWidget />
+              </Router>
+            </QueryClientProvider>
+            </GoogleOAuthProvider>
+          </Provider>
         </HelmetProvider>
       </LanguageProvider>
     </ErrorBoundary>

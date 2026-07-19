@@ -4,6 +4,9 @@ import { generateToken } from '../utils/generateToken';
 import { registerSchema, loginSchema } from '@techverse/shared';
 import { sendEmail } from '../utils/sendEmail';
 import crypto from 'crypto';
+import { OAuth2Client } from 'google-auth-library';
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -189,5 +192,64 @@ export const resetPassword = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     res.status(500).json({ status: 'error', message: error.message });
+  }
+};
+
+// @desc    Auth with Google
+// @route   POST /api/auth/google
+// @access  Public
+export const googleAuth = async (req: Request, res: Response) => {
+  try {
+    const { credential } = req.body;
+
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+
+    if (!payload || !payload.email) {
+      return res.status(400).json({ status: 'error', message: 'Invalid Google token' });
+    }
+
+    const { email, name, sub: googleId, picture } = payload;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Create user without password
+      user = await User.create({
+        name: name || 'User',
+        email,
+        googleId,
+        avatar: picture,
+        role: 'customer',
+        isEmailVerified: true, // Google verifies emails
+      });
+    } else {
+      // User exists, update googleId and avatar if not present
+      if (!user.googleId) {
+        user.googleId = googleId;
+        user.avatar = user.avatar || picture;
+        user.isEmailVerified = true;
+        await user.save();
+      }
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+        token: generateToken(user._id.toString(), user.role),
+      },
+    });
+  } catch (error: any) {
+    console.error('Google Auth Error:', error);
+    res.status(500).json({ status: 'error', message: 'Google Authentication failed' });
   }
 };

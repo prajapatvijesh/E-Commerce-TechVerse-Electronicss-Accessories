@@ -4,6 +4,7 @@ import { Button, Input } from '@techverse/ui';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
+import { GoogleLogin } from '@react-oauth/google';
 import { setCredentials } from '../store/slices/authSlice';
 
 export const Register: React.FC = () => {
@@ -27,6 +28,20 @@ export const Register: React.FC = () => {
     },
     onError: (err: any) => {
       alert(err.response?.data?.message || err.message);
+    }
+  });
+
+  const googleMutation = useMutation({
+    mutationFn: async (credential: string) => {
+      const res = await axios.post('/api/auth/google', { credential });
+      return res.data;
+    },
+    onSuccess: (data) => {
+      dispatch(setCredentials(data.data));
+      navigate(redirect.startsWith('/') ? redirect : `/${redirect}`);
+    },
+    onError: (err: any) => {
+      alert(err.response?.data?.message || 'Google Authentication failed');
     }
   });
 
@@ -100,12 +115,41 @@ export const Register: React.FC = () => {
               type="submit" 
               variant="primary" 
               className="w-full py-3 rounded-xl font-semibold shadow-md hover:shadow-xl hover:shadow-primary-500/20 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
-              disabled={registerMutation.isPending}
+              disabled={registerMutation.isPending || googleMutation.isPending}
             >
               {registerMutation.isPending ? 'Signing up...' : 'Sign up'}
             </Button>
           </div>
         </form>
+
+        <div className="mt-6">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300 dark:border-dark-600"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white/80 dark:bg-dark-800/80 text-gray-500">Or continue with</span>
+            </div>
+          </div>
+
+          <div className="mt-6 flex justify-center">
+            <GoogleLogin
+              onSuccess={credentialResponse => {
+                if (credentialResponse.credential) {
+                  googleMutation.mutate(credentialResponse.credential);
+                }
+              }}
+              onError={() => {
+                console.log('Login Failed');
+                alert('Google Authentication failed');
+              }}
+              useOneTap
+              theme="outline"
+              size="large"
+              shape="pill"
+            />
+          </div>
+        </div>
 
         <div className="mt-8 pt-6 border-t border-gray-200 dark:border-dark-600/50 text-center text-sm">
           <span className="text-gray-500 dark:text-gray-400">Already have an account? </span>

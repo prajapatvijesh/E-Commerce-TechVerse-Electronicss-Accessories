@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
 import { setCredentials } from '../store/slices/authSlice';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('orders');
@@ -14,6 +14,7 @@ export const Dashboard: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Fetch Orders
   const { data: ordersData, isLoading: ordersLoading } = useQuery({
@@ -131,7 +132,7 @@ export const Dashboard: React.FC = () => {
           onClick={() => {
              dispatch(setCredentials(null as any));
              localStorage.removeItem('user');
-             window.location.href = '/login';
+             navigate('/login');
           }}
           className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 mt-auto border border-red-100 dark:border-red-900/30"
         >

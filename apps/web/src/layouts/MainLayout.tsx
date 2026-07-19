@@ -142,7 +142,7 @@ export const MainLayout: React.FC = () => {
                     className="hidden sm:flex text-red-500 border-red-200 hover:bg-red-50"
                     onClick={() => {
                       localStorage.removeItem('user');
-                      window.location.href = '/login';
+                      navigate('/login');
                     }}
                   >
                     Logout
@@ -225,7 +225,7 @@ export const MainLayout: React.FC = () => {
                     className="w-full justify-center text-red-500 border-red-200"
                     onClick={() => {
                       localStorage.removeItem('user');
-                      window.location.href = '/login';
+                      navigate('/login');
                     }}
                   >
                     Logout

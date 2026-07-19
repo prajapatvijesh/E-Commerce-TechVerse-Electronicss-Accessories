@@ -4,7 +4,7 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
-    "lint": "eslint \"src/**/*.tsx?\"",
+    "lint": "eslint .",
     "build": "tsc"
   },
   "dependencies": {

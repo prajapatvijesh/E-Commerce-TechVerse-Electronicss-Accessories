@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Search, ShoppingCart, User, Heart, Send, MapPin, ArrowLeft } from 'lucide-react';
+import { Menu, X, Search, ShoppingCart, User, Heart, Send, MapPin, ArrowLeft, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 import { Button } from '@techverse/ui';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
@@ -250,55 +250,61 @@ export const MainLayout: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-dark-800 border-t border-gray-200 dark:border-dark-700 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <span className="text-xl font-bold text-primary-600 tracking-tighter">TechVerse</span>
-              <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-                The ultimate destination for premium electronics and accessories.
+      <footer className="relative bg-white dark:bg-dark-900 overflow-hidden mt-auto">
+        {/* Subtle top gradient line */}
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gray-200 dark:via-dark-700 to-transparent"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
+            <div className="lg:col-span-4 pr-4">
+              <Link to="/" className="inline-block" onClick={() => window.scrollTo(0,0)}>
+                <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-primary-400 tracking-tighter">TechVerse</span>
+              </Link>
+              <p className="mt-4 text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                The ultimate destination for premium electronics and accessories. Experience the future of technology with our curated collection of gadgets.
               </p>
-              <div className="mt-6 space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                <p className="flex items-start space-x-2">
-                  <MapPin size={16} className="mt-0.5 flex-shrink-0 text-primary-500" />
-                  <span>Jodhpur, Rajasthan<br/>342001, India</span>
+              <div className="mt-6 space-y-3 text-sm text-gray-500 dark:text-gray-400">
+                <p className="flex items-start space-x-3 group cursor-pointer">
+                  <div className="bg-primary-50 dark:bg-primary-900/20 p-2 rounded-lg group-hover:bg-primary-100 dark:group-hover:bg-primary-900/40 transition-colors">
+                    <MapPin size={16} className="text-primary-500" />
+                  </div>
+                  <span className="mt-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">TechVerse HQ, Jodhpur<br/>Rajasthan 342001, India</span>
                 </p>
               </div>
-              <div className="mt-6">
-                <h3 className="text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-2">Language</h3>
-                <div className="flex bg-gray-100 dark:bg-dark-700 rounded-lg p-0.5 w-fit">
-                  <button onClick={() => setLanguage('en')} className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${language === 'en' ? 'bg-white dark:bg-dark-600 shadow-sm text-primary-600' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}>English</button>
-                  <button onClick={() => setLanguage('hi')} className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${language === 'hi' ? 'bg-white dark:bg-dark-600 shadow-sm text-primary-600' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}>हिंदी (Hindi)</button>
+              <div className="mt-8">
+                <h3 className="text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3">Language</h3>
+                <div className="inline-flex bg-gray-100 dark:bg-dark-800 p-1 rounded-xl shadow-inner border border-gray-200/50 dark:border-dark-700/50">
+                  <button onClick={() => setLanguage('en')} className={`px-4 py-2 text-xs font-medium rounded-lg transition-all duration-200 ${language === 'en' ? 'bg-white dark:bg-dark-700 shadow-sm text-primary-600 dark:text-primary-400' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'}`}>English</button>
+                  <button onClick={() => setLanguage('hi')} className={`px-4 py-2 text-xs font-medium rounded-lg transition-all duration-200 ${language === 'hi' ? 'bg-white dark:bg-dark-700 shadow-sm text-primary-600 dark:text-primary-400' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'}`}>हिंदी</button>
                 </div>
               </div>
             </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Shop</h3>
-              <ul className="mt-4 space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                <li><Link to="/shop?category=mobiles" onClick={() => window.scrollTo(0,0)} className="hover:text-primary-600">Smartphones</Link></li>
-                <li><Link to="/shop?category=laptops" onClick={() => window.scrollTo(0,0)} className="hover:text-primary-600">Laptops</Link></li>
-                <li><Link to="/shop?category=gaming-accessories" onClick={() => window.scrollTo(0,0)} className="hover:text-primary-600">Accessories</Link></li>
+            
+            <div className="lg:col-span-2">
+              <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Shop</h3>
+              <ul className="mt-6 space-y-3 text-sm text-gray-500 dark:text-gray-400">
+                <li><Link to="/shop?category=mobiles" onClick={() => window.scrollTo(0,0)} className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">Smartphones</Link></li>
+                <li><Link to="/shop?category=laptops" onClick={() => window.scrollTo(0,0)} className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">Laptops & PCs</Link></li>
+                <li><Link to="/shop?category=gaming-accessories" onClick={() => window.scrollTo(0,0)} className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">Gaming Gear</Link></li>
+                <li><Link to="/shop" onClick={() => window.scrollTo(0,0)} className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">View All</Link></li>
               </ul>
             </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Support</h3>
-              <ul className="mt-4 space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                <li><Link to="/contact" className="hover:text-primary-600">Contact Us</Link></li>
-                <li><Link to="/faq" className="hover:text-primary-600">FAQ</Link></li>
-                <li><Link to="/returns" className="hover:text-primary-600">Returns Policy</Link></li>
+            
+            <div className="lg:col-span-2">
+              <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Support</h3>
+              <ul className="mt-6 space-y-3 text-sm text-gray-500 dark:text-gray-400">
+                <li><Link to="/contact" className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">Contact Us</Link></li>
+                <li><Link to="/faq" className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">Help Center (FAQ)</Link></li>
+                <li><Link to="/returns" className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">Returns Policy</Link></li>
+                <li><a href="http://localhost:3001" className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform flex items-center space-x-1"><span>Vendor Portal</span> <span className="text-[10px] bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400 px-1.5 py-0.5 rounded-full ml-1">Beta</span></a></li>
               </ul>
             </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Sell with us</h3>
-              <ul className="mt-4 space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                <li><a href="http://localhost:3001" className="hover:text-primary-600">Vendor Portal</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Newsletter</h3>
-              <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">Subscribe for updates and offers.</p>
+            
+            <div className="lg:col-span-4">
+              <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Join our Newsletter</h3>
+              <p className="mt-4 text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Get the latest updates on new products and upcoming sales.</p>
               <form 
-                className="mt-4 flex" 
+                className="mt-5 relative group" 
                 onSubmit={async (e) => {
                   e.preventDefault();
                   const email = (e.target as any).email.value;
@@ -311,16 +317,43 @@ export const MainLayout: React.FC = () => {
                   }
                 }}
               >
-                <input type="email" name="email" placeholder="Your email" required className="w-full px-3 py-2 text-sm border border-r-0 border-gray-300 dark:border-dark-600 rounded-l-lg bg-gray-50 dark:bg-dark-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-primary-500" />
-                <button type="submit" className="bg-primary-600 text-white px-3 py-2 rounded-r-lg hover:bg-primary-700 flex items-center justify-center">
-                  <Send size={16} />
-                </button>
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-primary-500 to-purple-500 rounded-xl opacity-20 group-hover:opacity-40 transition duration-300 blur"></div>
+                <div className="relative flex items-center bg-white dark:bg-dark-800 rounded-xl overflow-hidden border border-gray-200 dark:border-dark-700 shadow-sm focus-within:ring-2 focus-within:ring-primary-500/50">
+                  <input 
+                    type="email" 
+                    name="email" 
+                    placeholder="Enter your email address" 
+                    required 
+                    className="w-full px-4 py-3 text-sm bg-transparent dark:text-white focus:outline-none placeholder-gray-400" 
+                  />
+                  <button type="submit" className="bg-primary-600 text-white px-5 py-3 hover:bg-primary-700 transition-colors flex items-center justify-center font-medium text-sm">
+                    Subscribe
+                    <Send size={14} className="ml-2" />
+                  </button>
+                </div>
               </form>
             </div>
           </div>
-          <div className="border-t border-gray-200 dark:border-dark-800 mt-12 pt-8 text-center text-gray-500 text-sm flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p>{cmsData?.footerText || '© 2026 TechVerse Marketplace. All rights reserved.'}</p>
-            <div className="flex space-x-6">
+          
+          <div className="border-t border-gray-200/60 dark:border-dark-800/60 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <p className="text-gray-500 dark:text-gray-400 text-sm">{cmsData?.footerText || '© 2026 TechVerse Marketplace. All rights reserved.'}</p>
+            <div className="flex space-x-4">
+              <a href="#" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
+                <span className="sr-only">Facebook</span>
+                <Facebook size={18} />
+              </a>
+              <a href="#" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
+                <span className="sr-only">Twitter</span>
+                <Twitter size={18} />
+              </a>
+              <a href="#" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
+                <span className="sr-only">Instagram</span>
+                <Instagram size={18} />
+              </a>
+              <a href="#" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
+                <span className="sr-only">LinkedIn</span>
+                <Linkedin size={18} />
+              </a>
             </div>
           </div>
         </div>

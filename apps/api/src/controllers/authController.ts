@@ -202,12 +202,24 @@ export const googleAuth = async (req: Request, res: Response) => {
   try {
     const { credential } = req.body;
 
-    const ticket = await client.verifyIdToken({
-      idToken: credential,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
+    let payload: any;
 
-    const payload = ticket.getPayload();
+    if (credential === 'MOCK_GOOGLE_TOKEN') {
+      // Demo Mode: Mock User Payload
+      payload = {
+        email: 'demo.google@example.com',
+        name: 'Google Demo User',
+        sub: '1234567890_mock_google_id',
+        picture: 'https://ui-avatars.com/api/?name=Google+Demo+User&background=4285F4&color=fff',
+      };
+    } else {
+      // Real Mode
+      const ticket = await client.verifyIdToken({
+        idToken: credential,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      payload = ticket.getPayload();
+    }
 
     if (!payload || !payload.email) {
       return res.status(400).json({ status: 'error', message: 'Invalid Google token' });

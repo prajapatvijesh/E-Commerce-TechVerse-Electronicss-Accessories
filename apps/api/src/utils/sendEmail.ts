@@ -8,10 +8,13 @@ interface EmailOptions {
 
 export const sendEmail = async (options: EmailOptions) => {
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER) {
-    console.warn("⚠️ SMTP credentials not found! The email would have been:");
-    console.warn(`To: ${options.email}`);
-    console.warn(`Subject: ${options.subject}`);
-    console.warn(`Message:\n${options.message}`);
+    console.log('\n======================================================');
+    console.log('                 TEST EMAIL SYSTEM                    ');
+    console.log('======================================================');
+    console.log(`To: ${options.email}`);
+    console.log(`Subject: ${options.subject}`);
+    console.log(`\n${options.message}`);
+    console.log('======================================================\n');
     return;
   }
 

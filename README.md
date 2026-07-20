@@ -1,143 +1,135 @@
 # TechVerse - Multi-Vendor Electronics Marketplace
 
-This is a COMPLETE production-ready Multi-Vendor Electronics & Accessories Marketplace called "TechVerse".
+## Project Overview
 
-## Architecture
+**TechVerse** is a modern, premium, and fully-featured Multi-Vendor Electronics & Accessories Marketplace. Designed with a stunning glassmorphism UI, smooth micro-animations, and a robust backend, it serves as a complete e-commerce solution. The platform connects customers with various vendors, allowing seamless product browsing, cart management, secure checkout, and vendor management through a dedicated admin dashboard.
 
-- **Monorepo**: Turborepo with pnpm workspaces
-- **Frontend Apps**:
-  - `apps/web`: Customer-facing storefront (Vite + React + TailwindCSS + Redux Toolkit)
-  - `apps/admin`: Vendor and Admin dashboard (Vite + React + TailwindCSS + Redux Toolkit)
-- **Backend**:
-  - `apps/api`: Express.js backend with MongoDB Atlas
-- **Shared Packages**:
-  - `packages/shared`: Shared Typescript types, Zod schemas, utilities.
-  - `packages/ui`: Shared React components (Buttons, Inputs, Modals, Tables, etc.) styled with Tailwind CSS.
+## Features
 
-## Features Implemented
+- **Premium UI/UX:** Modern glassmorphism design, animated mesh background, and smooth Framer Motion micro-animations.
+- **Authentication & Authorization:** Secure JWT-based authentication with Role-Based Access Control (Customer, Vendor, Admin, SuperAdmin).
+- **Multi-Vendor System:** Vendors can register, upload products, and manage their specific orders and analytics.
+- **Product Management:** Complete CRUD for products, categories, and brands.
+- **Shopping Experience:** Full Shopping Cart, Wishlist, Compare feature, and multi-step Checkout flow.
+- **Interaction & Engagement:** Customer Reviews, Ratings, and a dedicated Q&A system for products.
+- **Order Management:** Invoice generation (PDF), coupon/discount validation, and order tracking.
+- **Global Settings:** CMS system for managing homepage hero banners, FAQs, and site-wide settings.
+- **Communication:** Enquiry system for B2B quotes and a Contact Us form.
 
-- Full JWT Authentication and Role-based routing (Customer, Vendor, Admin)
-- Complete Product CRUD with Categories, Brands, and Vendors.
-- Complete Shopping Cart, Wishlist, and Checkout flows.
-- Reviews and Q&A models.
-- Discount Coupons validation.
-- PDF Invoice Generation using `pdfkit`.
-- Global Settings and CMS system.
-- Analytics and Notifications.
-- Backend and Frontend Unit Test scaffolding.
+## Tech Stack
 
-## Database Model Summary
+**Frontend (Client & Admin Apps):**
+- React 18
+- Vite
+- TypeScript
+- Tailwind CSS (Premium Styling & Dark Mode)
+- Redux Toolkit & RTK Query
+- React Router DOM
+- Framer Motion (Animations)
+- React Hook Form & Zod (Validation)
 
-The MongoDB database uses the following core schemas:
+**Backend (API):**
+- Node.js
+- Express.js
+- TypeScript
+- MongoDB & Mongoose (Database)
+- JSON Web Token (JWT Auth)
+- Nodemailer (Email services)
 
-- **User**: Stores Customers, Vendors, Admins, and SuperAdmins (Role-based access, JWT auth).
-- **Product**: Stores product details (price, stock, vendor, category, brand, images).
-- **Order**: Stores checkout data, shipping address, payment status, and order items.
-- **Category & Brand**: Taxonomy models for product classification.
-- **Review**: Customer product reviews (1-5 stars, comments).
-- **QA**: Q&A interactions between customers and vendors.
-- **Wishlist**: Tracks favorite products per customer.
-- **Enquiry**: B2B or wholesale quote requests from customers to vendors.
-- **ContactMessage**: General contact form submissions from the store.
-- **Coupon**: Discount codes with percentage or fixed reduction.
-- **Notification**: In-app notifications for users.
+**Architecture:**
+- Turborepo (Monorepo setup)
+- PNPM Workspaces
 
-## Demo Credentials
+## Screenshots
 
-For evaluators and reviewers, you can use the following credentials to test the marketplace functionality:
+*(Add your screenshots here before submitting)*
 
-**Password for all accounts:** `password123`
+- **Homepage & Hero Section**: `![Homepage](./screenshots/home.png)`
+- **Shop & Glassmorphism Filters**: `![Shop](./screenshots/shop.png)`
+- **Product Details & Gallery**: `![Product Details](./screenshots/product.png)`
+- **Cart & Order Summary**: `![Cart](./screenshots/cart.png)`
+- **Checkout Flow**: `![Checkout](./screenshots/checkout.png)`
+- **Admin/Vendor Dashboard**: `![Dashboard](./screenshots/dashboard.png)`
 
-| Role            | Email                      |
-| :-------------- | :------------------------- |
-| **Super Admin** | `superadmin@techverse.com` |
-| **Admin**       | `admin@techverse.com`      |
-| **Vendor**      | `vendor1@techverse.com`    |
-| **Customer**    | `customer1@techverse.com`  |
+## Live Demo
 
-> **Note**: To load these accounts into the database, ensure you run the seed script as detailed below.
+- **Customer Storefront:** [https://e-commerce-tech-verse-electronicss-accessories-web.vercel.app](https://e-commerce-tech-verse-electronicss-accessories-web.vercel.app)
+- **Admin/Vendor Dashboard:** [https://e-commerce-tech-verse-electronicss-accessories-admin.vercel.app](https://e-commerce-tech-verse-electronicss-accessories-admin.vercel.app)
 
-## How to Run Locally
+*(**Demo Credentials** for evaluating the live site:)*
+- **Admin**: `admin@techverse.com` | Pass: `password123`
+- **Vendor**: `vendor1@techverse.com` | Pass: `password123`
+- **Customer**: `customer1@techverse.com` | Pass: `password123`
 
-1. **Install dependencies from root**:
+## Installation Steps
 
-```bash
-pnpm install
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/prajapatvijesh/E-Commerce-TechVerse-Electronicss-Accessories.git
+   cd E-Commerce-TechVerse-Electronicss-Accessories
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   pnpm install
+   ```
+
+3. **Configure Environment Variables:**
+   Create `.env` files based on the structure provided in the "Environment Variables" section below.
+
+4. **Seed the Database (Optional but recommended for testing):**
+   ```bash
+   pnpm run seed
+   ```
+
+5. **Start the Development Server (Runs all apps concurrently):**
+   ```bash
+   pnpm run dev
+   ```
+
+6. **Access the Apps:**
+   - Web Store: `http://localhost:3000`
+   - Admin/Vendor Dashboard: `http://localhost:3001`
+   - Backend API: `http://localhost:5000`
+
+## Environment Variables
+
+### Backend (`apps/api/.env`)
+Create an `.env` file in `apps/api/` and add the following variables:
+
+```env
+PORT=5000
+NODE_ENV=development
+
+# MongoDB Connection String
+MONGO_URI=your_mongodb_atlas_connection_string
+
+# Authentication
+JWT_SECRET=your_super_secret_jwt_key
+JWT_EXPIRE=30d
+
+# Cloudinary (For Image Uploads)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# SMTP (For Emails)
+SMTP_HOST=sandbox.smtp.mailtrap.io
+SMTP_PORT=2525
+SMTP_EMAIL=your_smtp_email
+SMTP_PASSWORD=your_smtp_password
+FROM_EMAIL=noreply@techverse.com
+FROM_NAME=TechVerse
+
+# Frontend URLs for CORS and Email Links
+FRONTEND_URL=http://localhost:3000
+ADMIN_URL=http://localhost:3001
 ```
 
-2. **Seed the Database** (Loads Demo Users, Products, Categories, Orders):
+### Frontend (`apps/web/.env` and `apps/admin/.env`)
+Create an `.env` file in both `apps/web/` and `apps/admin/` and add the backend API URL:
 
-```bash
-pnpm run seed
+```env
+VITE_API_URL=http://localhost:5000
 ```
-
-3. **Setup Environment Variables**:
-
-- In `apps/api/.env`, configure your MongoDB Atlas URI, JWT_SECRET, Cloudinary details, etc.
-
-4. **Start the Development Server (runs all apps concurrently)**:
-
-```bash
-pnpm run dev
-```
-
-5. **Access the Apps**:
-
-- Web Store: `http://localhost:3000`
-- Admin/Vendor Dashboard: `http://localhost:3001`
-- Backend API: `http://localhost:5000`
-
----
-
-## 🚀 Deployment Instructions
-
-### Frontend (Web Store) & Admin Dashboard (Vercel / Netlify)
-
-Since both the Customer Store (`apps/web`) and the Admin Dashboard (`apps/admin`) are standard Vite + React applications, they can be deployed easily on Vercel or Netlify.
-
-1. Connect your GitHub repository to Vercel.
-2. Import the `apps/web` project.
-   - **Framework Preset**: Vite
-   - **Build Command**: `pnpm run build`
-   - **Output Directory**: `dist`
-   - Add Environment Variables (e.g., `VITE_API_URL=https://your-backend-api.onrender.com`).
-3. Repeat the same steps for `apps/admin`.
-
-_(A `vercel.json` file is included in the root to assist with monorepo deployments)._
-
-### Backend API (Render / Heroku / Railway)
-
-The backend (`apps/api`) is an Express application. We recommend **Render.com** for free/cheap hosting.
-
-1. Connect your repository to Render.
-2. Create a new **Web Service**.
-3. **Root Directory**: `apps/api`
-4. **Build Command**: `pnpm install && pnpm run build`
-5. **Start Command**: `pnpm run start` (or `node dist/server.js`)
-6. Add all required Environment Variables (`MONGO_URI`, `JWT_SECRET`, etc.).
-
-_(A `render.yaml` blueprint is included in the root)._
-
----
-
-## 🎥 Screen Recording Instructions
-
-To evaluate this project, a screen recording of a full user flow is highly recommended.
-
-**Suggested Flow to Record:**
-
-1. **Customer Flow**: Open the Web Store -> Browse Products -> Filter by Price -> Add to Cart -> Checkout -> Apply Coupon -> Place Order.
-2. **Vendor Flow**: Open Admin Dashboard -> Login as `vendor1@techverse.com` -> Show Dashboard Sales -> Manage Products -> See new Order.
-3. **Admin Flow**: Login as `superadmin@techverse.com` -> View Global Analytics -> Manage Categories/Users.
-4. **Features Demo**: Show Q&A, Review Submission, and the Contact Us form functionality.
-
-_You can use tools like **OBS Studio**, **Loom**, or **Mac/Windows built-in screen recorders**._
-
----
-
-## 📂 Postman Collection
-
-A complete Postman collection is included in the root directory (`TechVerse_Postman_Collection.json`).
-
-- Open Postman -> Click **Import** -> Select the JSON file.
-- It includes endpoints for Auth, Products, Orders, Reviews, and Contact submission.
+*(Note: Change `http://localhost:5000` to your live API URL when deploying to production).*

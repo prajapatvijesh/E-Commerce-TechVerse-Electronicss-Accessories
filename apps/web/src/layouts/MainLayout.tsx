@@ -129,6 +129,14 @@ export const MainLayout: React.FC = () => {
 
             {/* Nav Actions */}
             <div className="flex items-center space-x-4">
+            
+              <button 
+                onClick={() => setIsDarkMode(!isDarkMode)} 
+                className="p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all"
+                title="Toggle Theme"
+              >
+                {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
+              </button>
 
               {user && <NotificationDropdown />}
 

@@ -6,7 +6,7 @@
 
 ## Features
 
-- **Premium UI/UX:** Modern glassmorphism design, animated mesh background, and smooth Framer Motion micro-animations.
+- **Premium UI/UX:** Modern glassmorphism design, animated mesh background, smooth Framer Motion micro-animations, and integrated Light/Dark mode toggles across all apps.
 - **Authentication & Authorization:** Secure JWT-based authentication with Role-Based Access Control (Customer, Vendor, Admin, SuperAdmin).
 - **Multi-Vendor System:** Vendors can register, upload products, and manage their specific orders and analytics.
 - **Product Management:** Complete CRUD for products, categories, and brands.

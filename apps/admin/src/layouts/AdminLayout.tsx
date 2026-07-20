@@ -3,7 +3,7 @@ import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
 import { logout } from '../store/slices/authSlice';
-import { LayoutDashboard, ShoppingBag, Users, Settings, LogOut, Menu, MessageSquare, Bell, Wallet, MessageCircle, MonitorPlay, Activity, FileText } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Users, Settings, LogOut, Menu, MessageSquare, Bell, Wallet, MessageCircle, MonitorPlay, Activity, FileText, Moon, Sun } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Button } from '@techverse/ui';
@@ -15,6 +15,23 @@ export const AdminLayout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const queryClient = useQueryClient();
+
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('theme') === 'dark';
+    }
+    return false;
+  });
+
+  React.useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
 
   const { data: notificationsData } = useQuery({
     queryKey: ['notifications'],
@@ -132,6 +149,15 @@ export const AdminLayout: React.FC = () => {
           </button>
           <div className="flex items-center space-x-2 md:space-x-6">
             
+            {/* Theme Toggle */}
+            <button 
+              onClick={() => setIsDarkMode(!isDarkMode)} 
+              className="p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 transition-colors"
+              title="Toggle Theme"
+            >
+              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+
             {/* Notifications */}
             <div className="relative">
               <button 

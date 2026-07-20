@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Search, ShoppingCart, User, Heart, Send, MapPin, ArrowLeft, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Menu, X, Search, ShoppingCart, User, Heart, Send, MapPin, ArrowLeft, Facebook, Twitter, Instagram, Linkedin, Moon, Sun } from 'lucide-react';
 import { Button } from '@techverse/ui';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
@@ -17,6 +17,24 @@ export const MainLayout: React.FC = () => {
   const cartItems = useSelector((state: RootState) => state.cart.cartItems);
   const user = useSelector((state: RootState) => state.auth.user);
   const { t, language, setLanguage } = useLanguage();
+
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('theme') === 'dark' || 
+        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+    return false;
+  });
+
+  React.useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
 
   const { data: cmsData } = useQuery({
     queryKey: ['homepage-settings'],
@@ -339,7 +357,14 @@ export const MainLayout: React.FC = () => {
           
           <div className="border-t border-gray-200/60 dark:border-dark-800/60 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-500 dark:text-gray-400 text-sm">{cmsData?.footerText || '© 2026 TechVerse Marketplace. All rights reserved.'}</p>
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 items-center">
+              <button 
+                onClick={() => setIsDarkMode(!isDarkMode)} 
+                className="p-2 mr-4 bg-gray-100 dark:bg-dark-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-full shadow-sm transition-all duration-200"
+                title="Toggle Theme"
+              >
+                {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+              </button>
               <a href="#" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
                 <span className="sr-only">Facebook</span>
                 <Facebook size={18} />

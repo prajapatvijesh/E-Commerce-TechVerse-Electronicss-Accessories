@@ -53,8 +53,8 @@
 
 ## Live Demo
 
-- **Customer Storefront:** [https://e-commerce-tech-verse-electronicss-accessories-kuttn215l.vercel.app/](https://e-commerce-tech-verse-electronicss-accessories-kuttn215l.vercel.app/)
-- **Admin/Vendor Dashboard:** [https://e-commerce-tech-verse-electronicss-accessories-admin-13q2asctb.vercel.app/](https://e-commerce-tech-verse-electronicss-accessories-admin-13q2asctb.vercel.app/)
+- **Customer Storefront:** [https://techverse-store-2026.vercel.app/](https://techverse-store-2026.vercel.app/)
+- **Admin/Vendor Dashboard:** [https://techverse-admin-panel.vercel.app/](https://techverse-admin-panel.vercel.app/)
 
 *(**Demo Credentials** for evaluating the live site:)*
 - **Admin**: `admin@techverse.com` | Pass: `password123`

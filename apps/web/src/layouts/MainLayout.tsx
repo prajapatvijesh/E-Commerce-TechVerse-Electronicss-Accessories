@@ -99,18 +99,18 @@ export const MainLayout: React.FC = () => {
                   <Link to="/offers" className="hover:text-primary-600 transition-colors font-semibold">Offers</Link>
                   <div className="absolute top-full left-1/2 -translate-x-1/2 w-[520px] bg-white/90 dark:bg-dark-800/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_40px_rgb(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] border border-gray-100/50 dark:border-dark-700/50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-4 group-hover:translate-y-0 p-4 grid grid-cols-2 gap-4 z-[100]">
                     <div className="absolute -top-6 left-0 w-full h-8 bg-transparent"></div>
-                    <Link to="/offers" className="block bg-gradient-to-br from-primary-600 to-blue-500 rounded-2xl p-6 text-white relative overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group/card">
+                    <div className="block bg-gradient-to-br from-primary-600 to-blue-500 rounded-2xl p-6 text-white relative overflow-hidden transition-all duration-300 group/card">
                       <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-3xl group-hover/card:scale-150 transition-transform duration-700"></div>
                       <h4 className="font-bold text-xl mb-1 relative z-10">Summer Sale</h4>
                       <p className="text-sm text-primary-100 mb-6 relative z-10">Up to 40% off on premium laptops & accessories</p>
-                      <span className="text-sm font-bold bg-white/20 text-white hover:bg-white hover:text-primary-600 px-4 py-2 rounded-xl backdrop-blur-md transition-all inline-block relative z-10">Shop Now</span>
-                    </Link>
-                    <Link to="/offers" className="block bg-gradient-to-br from-purple-600 to-pink-500 rounded-2xl p-6 text-white relative overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group/card">
+                      <Link to="/shop" className="text-sm font-bold bg-white/20 text-white hover:bg-white hover:text-primary-600 px-4 py-2 rounded-xl backdrop-blur-md transition-all inline-block relative z-10 cursor-pointer">Shop Now</Link>
+                    </div>
+                    <div className="block bg-gradient-to-br from-purple-600 to-pink-500 rounded-2xl p-6 text-white relative overflow-hidden transition-all duration-300 group/card">
                       <div className="absolute bottom-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-3xl group-hover/card:scale-150 transition-transform duration-700"></div>
                       <h4 className="font-bold text-xl mb-1 relative z-10">Bank Offers</h4>
                       <p className="text-sm text-purple-100 mb-6 relative z-10">Extra 10% instant cashback on selected credit cards</p>
-                      <span className="text-sm font-bold bg-white/20 text-white hover:bg-white hover:text-purple-600 px-4 py-2 rounded-xl backdrop-blur-md transition-all inline-block relative z-10">Explore Deals</span>
-                    </Link>
+                      <Link to="/offers" className="text-sm font-bold bg-white/20 text-white hover:bg-white hover:text-purple-600 px-4 py-2 rounded-xl backdrop-blur-md transition-all inline-block relative z-10 cursor-pointer">Explore Deals</Link>
+                    </div>
                   </div>
                 </div>
                 <Link to="/about" className="hover:text-primary-600 transition-colors font-semibold">About</Link>

@@ -78,7 +78,7 @@ export const MainLayout: React.FC = () => {
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16 items-center">
               {/* Logo & Main Nav */}
-            <div className="flex items-center space-x-4 lg:space-x-8">
+            <div className="flex items-center space-x-2 sm:space-x-4 lg:space-x-8">
               {location.pathname !== '/' && (
                 <button 
                   onClick={() => navigate(-1)} 
@@ -127,28 +127,28 @@ export const MainLayout: React.FC = () => {
             </div>
 
             {/* Nav Actions */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
             
               <button 
                 onClick={() => setIsDarkMode(!isDarkMode)} 
-                className="p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all"
+                className="p-1 sm:p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all"
                 title="Toggle Theme"
               >
-                {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
+                {isDarkMode ? <Sun size={20} className="sm:w-[22px] sm:h-[22px]" /> : <Moon size={20} className="sm:w-[22px] sm:h-[22px]" />}
               </button>
 
               {user && <NotificationDropdown />}
 
-              <Link to="/wishlist" className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all hidden sm:block">
-                <Heart size={22} />
+              <Link to="/wishlist" className="relative p-1 sm:p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all hidden sm:block">
+                <Heart size={20} className="sm:w-[22px] sm:h-[22px]" />
                 {wishlistItemsCount > 0 && (
                   <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white transform translate-x-1/4 -translate-y-1/4 bg-gradient-to-r from-red-500 to-pink-500 rounded-full shadow-sm">
                     {wishlistItemsCount}
                   </span>
                 )}
               </Link>
-              <Link to="/cart" className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all">
-                <ShoppingCart size={22} />
+              <Link to="/cart" className="relative p-1 sm:p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all">
+                <ShoppingCart size={20} className="sm:w-[22px] sm:h-[22px]" />
                 {cartItems.length > 0 && (
                   <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white transform translate-x-1/4 -translate-y-1/4 bg-gradient-to-r from-primary-500 to-emerald-400 rounded-full shadow-sm">
                     {cartItems.length}
@@ -183,10 +183,10 @@ export const MainLayout: React.FC = () => {
                 </Link>
               )}
               <button 
-                className="lg:hidden p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-xl transition-colors"
+                className="lg:hidden p-1 sm:p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-xl transition-colors ml-1"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
-                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                {isMobileMenuOpen ? <X size={22} className="sm:w-[24px] sm:h-[24px]" /> : <Menu size={22} className="sm:w-[24px] sm:h-[24px]" />}
               </button>
             </div>
           </div>

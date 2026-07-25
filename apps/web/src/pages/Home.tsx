@@ -253,10 +253,10 @@ export const Home: React.FC = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {[
-            { name: 'TechNova Global', rating: 4.9, sales: '10k+', image: 'https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?auto=format&fit=crop&w=200&q=80' },
-            { name: 'ElectroMart', rating: 4.8, sales: '8k+', image: 'https://images.unsplash.com/photo-1560159906-839281e80931?auto=format&fit=crop&w=200&q=80' },
-            { name: 'GadgetHub Pro', rating: 4.7, sales: '5k+', image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=200&q=80' },
-            { name: 'AudioPhile Elite', rating: 5.0, sales: '2k+', image: 'https://images.unsplash.com/photo-1522008342704-6b265b543c46?auto=format&fit=crop&w=200&q=80' }
+            { name: 'TechNova Global', rating: 4.9, sales: '10k+', image: 'https://api.dicebear.com/7.x/shapes/svg?seed=TechNova&backgroundColor=0ea5e9' },
+            { name: 'ElectroMart', rating: 4.8, sales: '8k+', image: 'https://api.dicebear.com/7.x/shapes/svg?seed=ElectroMart&backgroundColor=f97316' },
+            { name: 'GadgetHub Pro', rating: 4.7, sales: '5k+', image: 'https://api.dicebear.com/7.x/shapes/svg?seed=GadgetHub&backgroundColor=10b981' },
+            { name: 'AudioPhile Elite', rating: 5.0, sales: '2k+', image: 'https://api.dicebear.com/7.x/shapes/svg?seed=Audio&backgroundColor=8b5cf6' }
           ].map((vendor, i) => (
             <motion.div 
               key={i}

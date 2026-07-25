@@ -389,19 +389,19 @@ export const MainLayout: React.FC = () => {
               >
                 {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
               </button>
-              <a href="#" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
                 <span className="sr-only">Facebook</span>
                 <Facebook size={18} />
               </a>
-              <a href="#" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
                 <span className="sr-only">Twitter</span>
                 <Twitter size={18} />
               </a>
-              <a href="#" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
                 <span className="sr-only">Instagram</span>
                 <Instagram size={18} />
               </a>
-              <a href="#" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
                 <span className="sr-only">LinkedIn</span>
                 <Linkedin size={18} />
               </a>

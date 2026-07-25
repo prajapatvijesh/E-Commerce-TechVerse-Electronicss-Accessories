@@ -323,7 +323,7 @@ export const MainLayout: React.FC = () => {
                 <li><Link to="/contact" className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">Contact Us</Link></li>
                 <li><Link to="/faq" className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">Help Center (FAQ)</Link></li>
                 <li><Link to="/returns" className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">Returns Policy</Link></li>
-                <li><a href="http://localhost:3001" className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform flex items-center space-x-1"><span>Vendor Portal</span> <span className="text-[10px] bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400 px-1.5 py-0.5 rounded-full ml-1">Beta</span></a></li>
+                <li><a href={import.meta.env.VITE_ADMIN_URL || (import.meta.env.DEV ? 'http://localhost:3001' : 'https://techverse-admin-panel.vercel.app/')} className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform flex items-center space-x-1"><span>Vendor Portal</span> <span className="text-[10px] bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400 px-1.5 py-0.5 rounded-full ml-1">Beta</span></a></li>
               </ul>
             </div>
             

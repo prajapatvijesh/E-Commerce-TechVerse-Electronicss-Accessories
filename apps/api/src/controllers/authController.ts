@@ -38,7 +38,7 @@ export const registerUser = async (req: Request, res: Response) => {
         'New User Registered',
         `${user.name} (${user.email}) has joined TechVerse as a ${user.role}.`,
         'system',
-        `/users/${user._id}`
+        `/users`
       );
 
       res.status(201).json({

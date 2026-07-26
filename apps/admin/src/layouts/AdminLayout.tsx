@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
+import {
+  Outlet,
+  Navigate,
+  Link,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
 import { logout } from '../store/slices/authSlice';
@@ -31,6 +37,7 @@ export const AdminLayout: React.FC = () => {
   );
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const queryClient = useQueryClient();
@@ -250,8 +257,16 @@ export const AdminLayout: React.FC = () => {
                           onClick={() => {
                             if (!notification.isRead)
                               markAsReadMutation.mutate(notification._id);
-                            if (notification.link)
-                              window.location.href = notification.link;
+                            if (notification.link) {
+                              let sanitizedLink = notification.link;
+                              if (sanitizedLink.startsWith('/orders/')) {
+                                sanitizedLink = '/orders';
+                              } else if (sanitizedLink.startsWith('/users/')) {
+                                sanitizedLink = '/users';
+                              }
+                              navigate(sanitizedLink);
+                              setIsNotificationsOpen(false);
+                            }
                           }}
                         >
                           <div className="flex justify-between items-start mb-1">

@@ -62,7 +62,7 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
         'New Order Received',
         `Order ${createdOrder._id} has been placed for $${createdOrder.totalPrice}`,
         'order',
-        `/orders/${createdOrder._id}`
+        `/orders`
       );
 
       res.status(201).json({ status: 'success', data: createdOrder });
@@ -201,12 +201,10 @@ export const updateOrderToDelivered = async (
           (item: any) => item.vendor.toString() === req.user?._id.toString()
         );
         if (!isVendorOrder) {
-          return res
-            .status(403)
-            .json({
-              status: 'error',
-              message: 'Not authorized to deliver this order',
-            });
+          return res.status(403).json({
+            status: 'error',
+            message: 'Not authorized to deliver this order',
+          });
         }
       }
       order.deliveredAt = new Date();
@@ -235,12 +233,10 @@ export const updateOrderStatus = async (req: AuthRequest, res: Response) => {
           (item: any) => item.vendor.toString() === req.user?._id.toString()
         );
         if (!isVendorOrder) {
-          return res
-            .status(403)
-            .json({
-              status: 'error',
-              message: 'Not authorized to update this order',
-            });
+          return res.status(403).json({
+            status: 'error',
+            message: 'Not authorized to update this order',
+          });
         }
       }
       order.status = req.body.status;
@@ -275,12 +271,10 @@ export const updateOrderTracking = async (req: AuthRequest, res: Response) => {
           (item: any) => item.vendor.toString() === req.user?._id.toString()
         );
         if (!isVendorOrder) {
-          return res
-            .status(403)
-            .json({
-              status: 'error',
-              message: 'Not authorized to track this order',
-            });
+          return res.status(403).json({
+            status: 'error',
+            message: 'Not authorized to track this order',
+          });
         }
       }
       const { status, description, location, trackingNumber, courierName } =

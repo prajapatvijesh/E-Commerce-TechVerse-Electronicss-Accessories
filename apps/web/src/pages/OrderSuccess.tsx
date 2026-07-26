@@ -2,22 +2,47 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@techverse/ui';
 import { CheckCircle } from 'lucide-react';
+import Confetti from 'react-confetti';
+import { useWindowSize } from 'react-use';
+import { useSearchParams } from 'react-router-dom';
 
 export const OrderSuccess: React.FC = () => {
+  const { width, height } = useWindowSize();
+  const [searchParams] = useSearchParams();
+  const orderId = searchParams.get('order_id');
+
+  React.useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('Order Confirmed!', {
+        body: `Thank you for your purchase. Your order ${orderId ? `#${orderId}` : ''} is being processed.`,
+        icon: '/favicon.ico',
+      });
+    }
+  }, [orderId]);
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center p-4">
-      <div className="bg-white dark:bg-dark-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-dark-700 max-w-lg w-full text-center space-y-6">
+      <Confetti
+        width={width}
+        height={height}
+        recycle={false}
+        numberOfPieces={500}
+        gravity={0.15}
+      />
+      <div className="bg-white dark:bg-dark-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-dark-700 max-w-lg w-full text-center space-y-6 z-10">
         <div className="flex justify-center">
           <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-500">
             <CheckCircle size={48} />
           </div>
         </div>
-        
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Order Confirmed!</h1>
+
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          Order Confirmed!
+        </h1>
         <p className="text-gray-500 dark:text-gray-400">
-          Thank you for your purchase. We have received your order and will send you a confirmation email with tracking details shortly.
+          Thank you for your purchase. We have received your order and will send
+          you a confirmation email with tracking details shortly.
         </p>
-        
+
         <div className="flex flex-col sm:flex-row gap-4 pt-4">
           <Link to="/dashboard" className="flex-1">
             <Button variant="primary" className="w-full">

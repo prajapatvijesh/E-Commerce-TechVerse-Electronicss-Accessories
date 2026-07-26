@@ -4,6 +4,7 @@ import { AuthRequest } from '../middleware/authMiddleware';
 import Stripe from 'stripe';
 import { Notification } from '../models/Notification';
 import { ActivityLog } from '../models/ActivityLog';
+import { notifyAdmins } from '../utils/notifyAdmins';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy', {
   apiVersion: '2026-06-24.dahlia' as any,
@@ -14,10 +15,20 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy', {
 // @access  Private/Customer
 export const createOrder = async (req: AuthRequest, res: Response) => {
   try {
-    const { orderItems, shippingAddress, paymentMethod, itemsPrice, taxPrice, shippingPrice, totalPrice } = req.body;
+    const {
+      orderItems,
+      shippingAddress,
+      paymentMethod,
+      itemsPrice,
+      taxPrice,
+      shippingPrice,
+      totalPrice,
+    } = req.body;
 
     if (orderItems && orderItems.length === 0) {
-      return res.status(400).json({ status: 'error', message: 'No order items' });
+      return res
+        .status(400)
+        .json({ status: 'error', message: 'No order items' });
     } else {
       const order = new Order({
         orderItems,
@@ -33,16 +44,26 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       const createdOrder = await order.save();
 
       // Create notifications for vendors
-      const vendorIds = [...new Set(orderItems.map((item: any) => item.vendor.toString()))];
+      const vendorIds = [
+        ...new Set(orderItems.map((item: any) => item.vendor.toString())),
+      ];
       for (const vendorId of vendorIds) {
         await Notification.create({
           user: vendorId, // vendor ID
           title: 'New Order Received',
           message: `You have received a new order (${createdOrder._id}). Please check your vendor dashboard.`,
           type: 'vendor',
-          link: '/orders' // admin/vendor dashboard link
+          link: '/orders', // admin/vendor dashboard link
         });
       }
+
+      // Notify admins
+      await notifyAdmins(
+        'New Order Received',
+        `Order ${createdOrder._id} has been placed for $${createdOrder.totalPrice}`,
+        'order',
+        `/orders/${createdOrder._id}`
+      );
 
       res.status(201).json({ status: 'success', data: createdOrder });
     }
@@ -54,16 +75,21 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
 // @desc    Create Stripe Checkout Session
 // @route   POST /api/orders/checkout-session
 // @access  Private/Customer
-export const createStripeCheckoutSession = async (req: AuthRequest, res: Response) => {
+export const createStripeCheckoutSession = async (
+  req: AuthRequest,
+  res: Response
+) => {
   try {
     const { orderItems, orderId } = req.body;
-    
+
     const line_items = orderItems.map((item: any) => ({
       price_data: {
         currency: 'usd',
         product_data: {
           name: item.name,
-          images: [item.image || item.thumbnail || 'https://via.placeholder.com/150'],
+          images: [
+            item.image || item.thumbnail || 'https://via.placeholder.com/150',
+          ],
         },
         unit_amount: Math.round(item.price * 100),
       },
@@ -78,7 +104,7 @@ export const createStripeCheckoutSession = async (req: AuthRequest, res: Respons
       cancel_url: `${process.env.CLIENT_URL || 'http://localhost:3000'}/checkout`,
       metadata: {
         orderId: orderId,
-      }
+      },
     });
 
     res.json({ status: 'success', data: { url: session.url } });
@@ -93,7 +119,10 @@ export const createStripeCheckoutSession = async (req: AuthRequest, res: Respons
 // @access  Private
 export const getOrderById = async (req: AuthRequest, res: Response) => {
   try {
-    const order = await Order.findById(req.params.id).populate('user', 'name email');
+    const order = await Order.findById(req.params.id).populate(
+      'user',
+      'name email'
+    );
 
     if (order) {
       res.json({ status: 'success', data: order });
@@ -127,7 +156,7 @@ export const getOrders = async (req: AuthRequest, res: Response) => {
       // Find orders that contain at least one item from this vendor
       query = { 'orderItems.vendor': req.user._id };
     }
-    
+
     const orders = await Order.find(query).populate('user', 'id name');
     res.json({ status: 'success', data: orders });
   } catch (error: any) {
@@ -145,7 +174,7 @@ export const updateOrderToPaid = async (req: AuthRequest, res: Response) => {
     if (order) {
       order.isPaid = true;
       order.paidAt = new Date();
-      
+
       const updatedOrder = await order.save();
       res.json({ status: 'success', data: updatedOrder });
     } else {
@@ -159,20 +188,30 @@ export const updateOrderToPaid = async (req: AuthRequest, res: Response) => {
 // @desc    Update order to delivered
 // @route   PUT /api/orders/:id/deliver
 // @access  Private/Admin
-export const updateOrderToDelivered = async (req: AuthRequest, res: Response) => {
+export const updateOrderToDelivered = async (
+  req: AuthRequest,
+  res: Response
+) => {
   try {
     const order = await Order.findById(req.params.id);
 
     if (order) {
       if (req.user?.role === 'vendor') {
-        const isVendorOrder = order.orderItems.some((item: any) => item.vendor.toString() === req.user?._id.toString());
+        const isVendorOrder = order.orderItems.some(
+          (item: any) => item.vendor.toString() === req.user?._id.toString()
+        );
         if (!isVendorOrder) {
-          return res.status(403).json({ status: 'error', message: 'Not authorized to deliver this order' });
+          return res
+            .status(403)
+            .json({
+              status: 'error',
+              message: 'Not authorized to deliver this order',
+            });
         }
       }
       order.deliveredAt = new Date();
       order.status = 'delivered';
-      
+
       const updatedOrder = await order.save();
       res.json({ status: 'success', data: updatedOrder });
     } else {
@@ -192,19 +231,26 @@ export const updateOrderStatus = async (req: AuthRequest, res: Response) => {
 
     if (order) {
       if (req.user?.role === 'vendor') {
-        const isVendorOrder = order.orderItems.some((item: any) => item.vendor.toString() === req.user?._id.toString());
+        const isVendorOrder = order.orderItems.some(
+          (item: any) => item.vendor.toString() === req.user?._id.toString()
+        );
         if (!isVendorOrder) {
-          return res.status(403).json({ status: 'error', message: 'Not authorized to update this order' });
+          return res
+            .status(403)
+            .json({
+              status: 'error',
+              message: 'Not authorized to update this order',
+            });
         }
       }
       order.status = req.body.status;
       const updatedOrder = await order.save();
-      
+
       await ActivityLog.create({
         user: req.user?._id,
         action: 'UPDATE_ORDER_STATUS',
         resource: `Order: ${order._id} set to ${order.status}`,
-        ipAddress: req.ip
+        ipAddress: req.ip,
       });
 
       res.json({ status: 'success', data: updatedOrder });
@@ -225,13 +271,21 @@ export const updateOrderTracking = async (req: AuthRequest, res: Response) => {
 
     if (order) {
       if (req.user?.role === 'vendor') {
-        const isVendorOrder = order.orderItems.some((item: any) => item.vendor.toString() === req.user?._id.toString());
+        const isVendorOrder = order.orderItems.some(
+          (item: any) => item.vendor.toString() === req.user?._id.toString()
+        );
         if (!isVendorOrder) {
-          return res.status(403).json({ status: 'error', message: 'Not authorized to track this order' });
+          return res
+            .status(403)
+            .json({
+              status: 'error',
+              message: 'Not authorized to track this order',
+            });
         }
       }
-      const { status, description, location, trackingNumber, courierName } = req.body;
-      
+      const { status, description, location, trackingNumber, courierName } =
+        req.body;
+
       if (trackingNumber) order.trackingNumber = trackingNumber;
       if (courierName) order.courierName = courierName;
       if (status) order.status = status;
@@ -240,18 +294,19 @@ export const updateOrderTracking = async (req: AuthRequest, res: Response) => {
 
       order.trackingHistory.push({
         status: status || order.status,
-        description: description || `Order status updated to ${status || order.status}`,
+        description:
+          description || `Order status updated to ${status || order.status}`,
         location,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       const updatedOrder = await order.save();
-      
+
       await ActivityLog.create({
         user: req.user?._id,
         action: 'UPDATE_ORDER_TRACKING',
         resource: `Order Tracking: ${order._id} updated`,
-        ipAddress: req.ip
+        ipAddress: req.ip,
       });
 
       res.json({ status: 'success', data: updatedOrder });

@@ -28,10 +28,13 @@ import { Vendors } from './pages/Vendors';
 import { Offers } from './pages/Offers';
 import { About } from './pages/About';
 import { CMSPage } from './pages/CMSPage';
+import { NotFound } from './pages/NotFound';
 import { useSelector } from 'react-redux';
 import { RootState } from './store/store';
 import { Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 
+import { ModalProvider } from '@techverse/ui';
 import { ScrollToTop } from './components/ScrollToTop';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ChatWidget } from './components/ChatWidget';
@@ -54,37 +57,90 @@ function App() {
           <Provider store={store}>
             <GoogleOAuthProvider clientId={clientId}>
               <QueryClientProvider client={queryClient}>
-                <Router>
-                <ScrollToTop />
-              <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password/:token" element={<ResetPassword />} />
-              <Route path="/" element={<MainLayout />}>
-                <Route index element={<Home />} />
-                <Route path="shop" element={<Shop />} />
-                <Route path="product/:slug" element={<ProductDetails />} />
-                <Route path="cart" element={<Cart />} />
-                <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-                <Route path="order/success" element={<ProtectedRoute><OrderSuccess /></ProtectedRoute>} />
-                <Route path="orders/:id" element={<ProtectedRoute><OrderDetails /></ProtectedRoute>} />
-                <Route path="dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
-                <Route path="compare" element={<Compare />} />
-                <Route path="contact" element={<Contact />} />
-                <Route path="faq" element={<FAQ />} />
-                <Route path="returns" element={<Returns />} />
-                <Route path="vendors" element={<Vendors />} />
-                <Route path="vendor/:id" element={<VendorStore />} />
-                <Route path="offers" element={<Offers />} />
-                <Route path="about" element={<About />} />
-                <Route path="page/:slug" element={<CMSPage />} />
-              </Route>
-            </Routes>
-                <ChatWidget />
-              </Router>
-            </QueryClientProvider>
+                <ModalProvider>
+                  <Router>
+                    <ScrollToTop />
+                    <Toaster
+                      position="top-right"
+                      toastOptions={{
+                        className: 'dark:bg-dark-800 dark:text-white',
+                      }}
+                    />
+                    <Routes>
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/register" element={<Register />} />
+                      <Route
+                        path="/forgot-password"
+                        element={<ForgotPassword />}
+                      />
+                      <Route
+                        path="/reset-password/:token"
+                        element={<ResetPassword />}
+                      />
+                      <Route path="/" element={<MainLayout />}>
+                        <Route index element={<Home />} />
+                        <Route path="shop" element={<Shop />} />
+                        <Route
+                          path="product/:slug"
+                          element={<ProductDetails />}
+                        />
+                        <Route path="cart" element={<Cart />} />
+                        <Route
+                          path="checkout"
+                          element={
+                            <ProtectedRoute>
+                              <Checkout />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="order/success"
+                          element={
+                            <ProtectedRoute>
+                              <OrderSuccess />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="orders/:id"
+                          element={
+                            <ProtectedRoute>
+                              <OrderDetails />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="dashboard"
+                          element={
+                            <ProtectedRoute>
+                              <Dashboard />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="wishlist"
+                          element={
+                            <ProtectedRoute>
+                              <Wishlist />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route path="compare" element={<Compare />} />
+                        <Route path="contact" element={<Contact />} />
+                        <Route path="faq" element={<FAQ />} />
+                        <Route path="returns" element={<Returns />} />
+                        <Route path="vendors" element={<Vendors />} />
+                        <Route path="vendor/:id" element={<VendorStore />} />
+                        <Route path="offers" element={<Offers />} />
+                        <Route path="about" element={<About />} />
+                        <Route path="page/:slug" element={<CMSPage />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Route>
+                    </Routes>
+                    <ChatWidget />
+                  </Router>
+                </ModalProvider>
+              </QueryClientProvider>
             </GoogleOAuthProvider>
           </Provider>
         </HelmetProvider>

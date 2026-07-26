@@ -1,10 +1,18 @@
 import React, { useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, Input, Button } from '@techverse/ui';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Input,
+  Button,
+} from '@techverse/ui';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 
 export const Settings: React.FC = () => {
   const queryClient = useQueryClient();
@@ -16,7 +24,7 @@ export const Settings: React.FC = () => {
     queryFn: async () => {
       const res = await axios.get('/api/settings');
       return res.data.data;
-    }
+    },
   });
 
   useEffect(() => {
@@ -37,16 +45,19 @@ export const Settings: React.FC = () => {
   }, [data, setValue]);
 
   const updateMutation = useMutation({
-    mutationFn: (updatedData: any) => axios.put('/api/settings', updatedData, {
-      headers: { Authorization: `Bearer ${user?.token}` }
-    }),
+    mutationFn: (updatedData: any) =>
+      axios.put('/api/settings', updatedData, {
+        headers: { Authorization: `Bearer ${user?.token}` },
+      }),
     onSuccess: () => {
-      alert('Settings updated successfully!');
+      toast.success('Settings updated successfully!');
       queryClient.invalidateQueries({ queryKey: ['settings'] });
     },
     onError: (err: any) => {
-      alert(err.response?.data?.message || err.message || 'Update failed');
-    }
+      toast.error(
+        err.response?.data?.message || err.message || 'Update failed'
+      );
+    },
   });
 
   const onSubmit = (formData: any) => {
@@ -56,18 +67,23 @@ export const Settings: React.FC = () => {
         facebook: formData.facebook,
         twitter: formData.twitter,
         instagram: formData.instagram,
-      }
+      },
     };
     updateMutation.mutate(payload);
   };
 
-  if (isLoading) return <div className="dark:text-white">Loading settings...</div>;
+  if (isLoading)
+    return <div className="dark:text-white">Loading settings...</div>;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold dark:text-white">Store Settings</h1>
-        <Button variant="primary" type="submit" disabled={updateMutation.isPending}>
+        <Button
+          variant="primary"
+          type="submit"
+          disabled={updateMutation.isPending}
+        >
           {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
         </Button>
       </div>
@@ -83,8 +99,18 @@ export const Settings: React.FC = () => {
             <Input label="Support Email" {...register('contactEmail')} />
             <Input label="Phone Number" {...register('contactPhone')} />
             <div className="flex items-center space-x-2 mt-4">
-              <input type="checkbox" id="maintenanceMode" {...register('maintenanceMode')} className="w-4 h-4 text-primary-600 rounded" />
-              <label htmlFor="maintenanceMode" className="dark:text-white font-medium">Enable Maintenance Mode</label>
+              <input
+                type="checkbox"
+                id="maintenanceMode"
+                {...register('maintenanceMode')}
+                className="w-4 h-4 text-primary-600 rounded"
+              />
+              <label
+                htmlFor="maintenanceMode"
+                className="dark:text-white font-medium"
+              >
+                Enable Maintenance Mode
+              </label>
             </div>
           </CardContent>
         </Card>
@@ -95,9 +121,24 @@ export const Settings: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <Input label="Currency" {...register('currency')} />
-            <Input label="Tax Rate (%)" type="number" step="0.01" {...register('taxRate')} />
-            <Input label="Flat Shipping Rate" type="number" step="0.01" {...register('flatShippingRate')} />
-            <Input label="Admin Commission (%)" type="number" step="0.01" {...register('adminCommission')} />
+            <Input
+              label="Tax Rate (%)"
+              type="number"
+              step="0.01"
+              {...register('taxRate')}
+            />
+            <Input
+              label="Flat Shipping Rate"
+              type="number"
+              step="0.01"
+              {...register('flatShippingRate')}
+            />
+            <Input
+              label="Admin Commission (%)"
+              type="number"
+              step="0.01"
+              {...register('adminCommission')}
+            />
           </CardContent>
         </Card>
 

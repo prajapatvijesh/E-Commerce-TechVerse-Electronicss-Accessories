@@ -8,13 +8,14 @@ import { DummyRazorpayPopup } from '../components/DummyRazorpayPopup';
 
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 export const Checkout: React.FC = () => {
   const { cartItems } = useSelector((state: RootState) => state.cart);
   const { user } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const [fullName, setFullName] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
@@ -26,12 +27,15 @@ export const Checkout: React.FC = () => {
   const [couponCode, setCouponCode] = useState('');
   const [discountAmount, setDiscountAmount] = useState(0);
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
-  
+
   const [showRazorpay, setShowRazorpay] = useState(false);
   const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
   const [amountToPay, setAmountToPay] = useState(0);
 
-  const itemsPrice = cartItems.reduce((acc, item) => acc + item.qty * item.price, 0);
+  const itemsPrice = cartItems.reduce(
+    (acc, item) => acc + item.qty * item.price,
+    0
+  );
 
   const orderMutation = useMutation({
     mutationFn: async (orderData: any) => {
@@ -49,24 +53,34 @@ export const Checkout: React.FC = () => {
 
       if (paymentMethod === 'Razorpay') {
         setCreatedOrderId(data.data._id);
-        setAmountToPay(data.data.totalPrice || itemsPrice - discountAmount + 0 + Number((0.15 * (itemsPrice - discountAmount)).toFixed(2)));
+        setAmountToPay(
+          data.data.totalPrice ||
+            itemsPrice -
+              discountAmount +
+              0 +
+              Number((0.15 * (itemsPrice - discountAmount)).toFixed(2))
+        );
         setShowRazorpay(true);
         return; // Wait for popup
       }
-      
-      alert('Order placed successfully!');
+
+      toast.success('Order placed successfully!');
       navigate('/order/success');
     },
     onError: (err: any) => {
-      alert(err.response?.data?.message || err.message);
-    }
+      toast.error(err.response?.data?.message || err.message);
+    },
   });
 
   const validateCouponMutation = useMutation({
     mutationFn: async (code: string) => {
-      const res = await axios.post('/api/coupons/validate', { code, purchaseAmount: itemsPrice }, {
-        headers: { Authorization: `Bearer ${user?.token}` }
-      });
+      const res = await axios.post(
+        '/api/coupons/validate',
+        { code, purchaseAmount: itemsPrice },
+        {
+          headers: { Authorization: `Bearer ${user?.token}` },
+        }
+      );
       return res.data;
     },
     onSuccess: (data) => {
@@ -79,13 +93,13 @@ export const Checkout: React.FC = () => {
         calculatedDiscount = coupon.discountValue;
       }
       setDiscountAmount(calculatedDiscount);
-      alert('Coupon applied successfully!');
+      toast.success('Coupon applied successfully!');
     },
     onError: (err: any) => {
-      alert(err.response?.data?.message || 'Invalid coupon');
+      toast.error(err.response?.data?.message || 'Invalid coupon');
       setDiscountAmount(0);
       setAppliedCoupon(null);
-    }
+    },
   });
 
   const handleApplyCoupon = () => {
@@ -99,14 +113,17 @@ export const Checkout: React.FC = () => {
       navigate('/login?redirect=/checkout');
       return;
     }
-    
+
     const shippingPrice = 0; // Free shipping
     const taxPrice = Number((0.15 * (itemsPrice - discountAmount)).toFixed(2)); // 15% dummy tax on discounted price
     const totalPrice = itemsPrice - discountAmount + shippingPrice + taxPrice;
 
-    const cleanedCartItems = cartItems.map(item => ({
+    const cleanedCartItems = cartItems.map((item) => ({
       ...item,
-      vendor: typeof item.vendor === 'object' ? (item.vendor as any)?._id : (item.vendor || '60d5ec49f1b2c8b1f8e4b3a1') // fallback to dummy vendor if missing
+      vendor:
+        typeof item.vendor === 'object'
+          ? (item.vendor as any)?._id
+          : item.vendor || '60d5ec49f1b2c8b1f8e4b3a1', // fallback to dummy vendor if missing
     }));
 
     orderMutation.mutate({
@@ -120,13 +137,18 @@ export const Checkout: React.FC = () => {
         country,
         phone,
       },
-      paymentMethod: paymentMethod === 'Stripe' ? 'Stripe' : paymentMethod === 'Razorpay' ? 'Razorpay' : paymentMethod,
+      paymentMethod:
+        paymentMethod === 'Stripe'
+          ? 'Stripe'
+          : paymentMethod === 'Razorpay'
+            ? 'Razorpay'
+            : paymentMethod,
       itemsPrice,
       taxPrice,
       shippingPrice,
       totalPrice,
       coupon: appliedCoupon?._id,
-      discountAmount
+      discountAmount,
     });
   };
 
@@ -134,108 +156,116 @@ export const Checkout: React.FC = () => {
     setShowRazorpay(false);
     if (!createdOrderId) return;
     try {
-      await axios.put(`/api/orders/${createdOrderId}/pay`, {
-        id: paymentId,
-        status: 'succeeded',
-        update_time: new Date().toISOString(),
-        email_address: user?.email
-      }, {
-        headers: { Authorization: `Bearer ${user?.token}` }
-      });
+      await axios.put(
+        `/api/orders/${createdOrderId}/pay`,
+        {
+          id: paymentId,
+          status: 'succeeded',
+          update_time: new Date().toISOString(),
+          email_address: user?.email,
+        },
+        {
+          headers: { Authorization: `Bearer ${user?.token}` },
+        }
+      );
       navigate('/order/success');
     } catch (err) {
-      alert('Failed to update payment status on server.');
+      toast.error('Failed to update payment status on server.');
     }
   };
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 relative">
       {showRazorpay && (
-        <DummyRazorpayPopup 
-          amount={amountToPay} 
-          onSuccess={handleRazorpaySuccess} 
+        <DummyRazorpayPopup
+          amount={amountToPay}
+          onSuccess={handleRazorpaySuccess}
           onClose={() => {
             setShowRazorpay(false);
             navigate('/order/success'); // User closed, order is unpaid
-          }} 
+          }}
         />
       )}
       <h1 className="text-3xl font-bold dark:text-white">Checkout</h1>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-8">
           {/* Shipping Form */}
           <div className="bg-white/70 backdrop-blur-md dark:bg-dark-800/70 p-8 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgb(0,0,0,0.2)] border border-white/40 dark:border-dark-700/50">
-            <h2 className="text-xl font-semibold dark:text-white mb-4">Shipping Address</h2>
+            <h2 className="text-xl font-semibold dark:text-white mb-4">
+              Shipping Address
+            </h2>
             <form className="space-y-4" onSubmit={submitHandler}>
-              <Input 
-                label="Full Name" 
-                value={fullName} 
-                onChange={(e) => setFullName(e.target.value)} 
-                required 
+              <Input
+                label="Full Name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
               />
-              <Input 
-                label="Street Address" 
-                value={address} 
-                onChange={(e) => setAddress(e.target.value)} 
-                required 
+              <Input
+                label="Street Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                required
               />
               <div className="grid grid-cols-2 gap-4">
-                <Input 
-                  label="City" 
-                  value={city} 
-                  onChange={(e) => setCity(e.target.value)} 
-                  required 
+                <Input
+                  label="City"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  required
                 />
-                <Input 
-                  label="State/Province" 
-                  value={state} 
-                  onChange={(e) => setState(e.target.value)} 
-                  required 
+                <Input
+                  label="State/Province"
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  required
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <Input 
-                  label="ZIP/Postal Code" 
-                  value={zipCode} 
-                  onChange={(e) => setZipCode(e.target.value)} 
-                  required 
+                <Input
+                  label="ZIP/Postal Code"
+                  value={zipCode}
+                  onChange={(e) => setZipCode(e.target.value)}
+                  required
                 />
-                <Input 
-                  label="Country" 
-                  value={country} 
-                  onChange={(e) => setCountry(e.target.value)} 
-                  required 
+                <Input
+                  label="Country"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  required
                 />
               </div>
-              <Input 
-                label="Phone Number" 
-                value={phone} 
-                onChange={(e) => setPhone(e.target.value)} 
-                required 
+              <Input
+                label="Phone Number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
               />
             </form>
           </div>
 
           {/* Payment Method */}
           <div className="bg-white/70 backdrop-blur-md dark:bg-dark-800/70 p-8 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgb(0,0,0,0.2)] border border-white/40 dark:border-dark-700/50">
-            <h2 className="text-xl font-semibold dark:text-white mb-4">Payment Method</h2>
+            <h2 className="text-xl font-semibold dark:text-white mb-4">
+              Payment Method
+            </h2>
             <div className="space-y-2">
               <label className="flex items-center space-x-3 text-sm dark:text-gray-300">
-                <input 
-                  type="radio" 
-                  value="Razorpay" 
-                  checked={paymentMethod === 'Razorpay'} 
+                <input
+                  type="radio"
+                  value="Razorpay"
+                  checked={paymentMethod === 'Razorpay'}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                   className="text-primary-600"
                 />
                 <span>Razorpay (Cards, UPI, Netbanking)</span>
               </label>
               <label className="flex items-center space-x-3 text-sm dark:text-gray-300">
-                <input 
-                  type="radio" 
-                  value="Cash on Delivery (COD)" 
-                  checked={paymentMethod === 'Cash on Delivery (COD)'} 
+                <input
+                  type="radio"
+                  value="Cash on Delivery (COD)"
+                  checked={paymentMethod === 'Cash on Delivery (COD)'}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                   className="text-primary-600"
                 />
@@ -247,13 +277,19 @@ export const Checkout: React.FC = () => {
 
         {/* Order Summary */}
         <div className="bg-white/80 backdrop-blur-xl dark:bg-dark-800/80 p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-white/40 dark:border-dark-700/50 h-fit sticky top-28">
-          <h2 className="text-xl font-bold dark:text-white mb-6">Order Summary</h2>
+          <h2 className="text-xl font-bold dark:text-white mb-6">
+            Order Summary
+          </h2>
           <div className="space-y-4 text-sm text-gray-600 dark:text-gray-300 mb-6 border-b border-gray-100 dark:border-dark-700 pb-6">
             {cartItems.map((item) => (
-               <div key={item.product} className="flex justify-between">
-                 <span className="truncate pr-4">{item.qty} x {item.name}</span>
-                 <span className="font-medium">₹{(item.qty * item.price).toFixed(2)}</span>
-               </div>
+              <div key={item.product} className="flex justify-between">
+                <span className="truncate pr-4">
+                  {item.qty} x {item.name}
+                </span>
+                <span className="font-medium">
+                  ₹{(item.qty * item.price).toFixed(2)}
+                </span>
+              </div>
             ))}
           </div>
 
@@ -261,7 +297,10 @@ export const Checkout: React.FC = () => {
             <div className="flex justify-between">
               <span>Items Total</span>
               <span className="font-semibold dark:text-white">
-                ₹{cartItems.reduce((acc, item) => acc + item.qty * item.price, 0).toFixed(2)}
+                ₹
+                {cartItems
+                  .reduce((acc, item) => acc + item.qty * item.price, 0)
+                  .toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between">
@@ -271,44 +310,69 @@ export const Checkout: React.FC = () => {
             {discountAmount > 0 && (
               <div className="flex justify-between text-green-600 dark:text-green-400">
                 <span>Discount ({appliedCoupon?.code})</span>
-                <span className="font-semibold">-₹{discountAmount.toFixed(2)}</span>
+                <span className="font-semibold">
+                  -₹{discountAmount.toFixed(2)}
+                </span>
               </div>
             )}
             <div className="border-t border-gray-200/50 dark:border-dark-700/50 pt-6 mt-6 flex justify-between items-end">
-              <span className="text-lg font-bold text-gray-900 dark:text-white">Total</span>
-              <span className="text-3xl font-extrabold text-primary-600 dark:text-primary-400 tracking-tight">₹{(itemsPrice - discountAmount + 0 + Number((0.15 * (itemsPrice - discountAmount)).toFixed(2))).toFixed(2)}</span>
+              <span className="text-lg font-bold text-gray-900 dark:text-white">
+                Total
+              </span>
+              <span className="text-3xl font-extrabold text-primary-600 dark:text-primary-400 tracking-tight">
+                ₹
+                {(
+                  itemsPrice -
+                  discountAmount +
+                  0 +
+                  Number((0.15 * (itemsPrice - discountAmount)).toFixed(2))
+                ).toFixed(2)}
+              </span>
             </div>
           </div>
-          
+
           <div className="mt-6">
-            <label className="text-sm font-medium dark:text-white mb-2 block">Discount Code</label>
+            <label className="text-sm font-medium dark:text-white mb-2 block">
+              Discount Code
+            </label>
             <div className="flex space-x-2">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value)}
-                placeholder="Enter code" 
+                placeholder="Enter code"
                 className="w-full px-3 py-2 border rounded-md dark:bg-dark-700 dark:border-dark-600 dark:text-white"
                 disabled={!!appliedCoupon}
               />
               {appliedCoupon ? (
-                <Button variant="outline" type="button" onClick={() => {
-                  setAppliedCoupon(null);
-                  setDiscountAmount(0);
-                  setCouponCode('');
-                }}>Remove</Button>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => {
+                    setAppliedCoupon(null);
+                    setDiscountAmount(0);
+                    setCouponCode('');
+                  }}
+                >
+                  Remove
+                </Button>
               ) : (
-                <Button variant="outline" type="button" onClick={handleApplyCoupon} disabled={!couponCode || validateCouponMutation.isPending}>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={handleApplyCoupon}
+                  disabled={!couponCode || validateCouponMutation.isPending}
+                >
                   {validateCouponMutation.isPending ? '...' : 'Apply'}
                 </Button>
               )}
             </div>
-            <Button 
-              variant="primary" 
-              className="w-full mt-8 rounded-2xl h-14 text-lg shadow-[0_8px_25px_rgba(16,185,129,0.3)] hover:shadow-[0_12px_35px_rgba(16,185,129,0.4)] hover:-translate-y-1 transition-all" 
-              size="lg" 
-              type="submit" 
-              disabled={orderMutation.isPending} 
+            <Button
+              variant="primary"
+              className="w-full mt-8 rounded-2xl h-14 text-lg shadow-[0_8px_25px_rgba(16,185,129,0.3)] hover:shadow-[0_12px_35px_rgba(16,185,129,0.4)] hover:-translate-y-1 transition-all"
+              size="lg"
+              type="submit"
+              disabled={orderMutation.isPending}
               onClick={submitHandler}
             >
               {orderMutation.isPending ? 'Processing...' : 'Place Order & Pay'}

@@ -5,6 +5,7 @@ import { registerSchema, loginSchema } from '@techverse/shared';
 import { sendEmail } from '../utils/sendEmail';
 import crypto from 'crypto';
 import { OAuth2Client } from 'google-auth-library';
+import { notifyAdmins } from '../utils/notifyAdmins';
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -19,7 +20,9 @@ export const registerUser = async (req: Request, res: Response) => {
     const userExists = await User.findOne({ email });
 
     if (userExists) {
-      return res.status(400).json({ status: 'error', message: 'User already exists' });
+      return res
+        .status(400)
+        .json({ status: 'error', message: 'User already exists' });
     }
 
     const user = await User.create({
@@ -30,6 +33,14 @@ export const registerUser = async (req: Request, res: Response) => {
     });
 
     if (user) {
+      // Notify admins
+      await notifyAdmins(
+        'New User Registered',
+        `${user.name} (${user.email}) has joined TechVerse as a ${user.role}.`,
+        'system',
+        `/users/${user._id}`
+      );
+
       res.status(201).json({
         status: 'success',
         data: {
@@ -73,7 +84,9 @@ export const loginUser = async (req: Request, res: Response) => {
         },
       });
     } else {
-      res.status(401).json({ status: 'error', message: 'Invalid email or password' });
+      res
+        .status(401)
+        .json({ status: 'error', message: 'Invalid email or password' });
     }
   } catch (error: any) {
     if (error.errors) {
@@ -116,7 +129,9 @@ export const forgotPassword = async (req: Request, res: Response) => {
     const user = await User.findOne({ email: req.body.email });
 
     if (!user) {
-      return res.status(404).json({ status: 'error', message: 'There is no user with that email' });
+      return res
+        .status(404)
+        .json({ status: 'error', message: 'There is no user with that email' });
     }
 
     // Get reset token
@@ -126,7 +141,8 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
     // Create reset url
     // This URL will be on the frontend
-    const origin = req.headers.origin || process.env.CLIENT_URL || 'http://localhost:3000';
+    const origin =
+      req.headers.origin || process.env.CLIENT_URL || 'http://localhost:3000';
     const resetUrl = `${origin}/reset-password/${resetToken}`;
 
     const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
@@ -145,7 +161,9 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
       await user.save({ validateBeforeSave: false });
 
-      return res.status(500).json({ status: 'error', message: 'Email could not be sent' });
+      return res
+        .status(500)
+        .json({ status: 'error', message: 'Email could not be sent' });
     }
   } catch (error: any) {
     res.status(500).json({ status: 'error', message: error.message });
@@ -169,14 +187,16 @@ export const resetPassword = async (req: Request, res: Response) => {
     }).select('+password');
 
     if (!user) {
-      return res.status(400).json({ status: 'error', message: 'Invalid or expired token' });
+      return res
+        .status(400)
+        .json({ status: 'error', message: 'Invalid or expired token' });
     }
 
     // Set new password
     user.password = req.body.password;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
-    
+
     // Will hash the password in pre-save middleware
     await user.save();
 
@@ -210,7 +230,8 @@ export const googleAuth = async (req: Request, res: Response) => {
         email: 'demo.google@example.com',
         name: 'Google Demo User',
         sub: '1234567890_mock_google_id',
-        picture: 'https://ui-avatars.com/api/?name=Google+Demo+User&background=4285F4&color=fff',
+        picture:
+          'https://ui-avatars.com/api/?name=Google+Demo+User&background=4285F4&color=fff',
       };
     } else {
       // Real Mode
@@ -222,7 +243,9 @@ export const googleAuth = async (req: Request, res: Response) => {
     }
 
     if (!payload || !payload.email) {
-      return res.status(400).json({ status: 'error', message: 'Invalid Google token' });
+      return res
+        .status(400)
+        .json({ status: 'error', message: 'Invalid Google token' });
     }
 
     const { email, name, sub: googleId, picture } = payload;
@@ -262,6 +285,8 @@ export const googleAuth = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error('Google Auth Error:', error);
-    res.status(500).json({ status: 'error', message: 'Google Authentication failed' });
+    res
+      .status(500)
+      .json({ status: 'error', message: 'Google Authentication failed' });
   }
 };

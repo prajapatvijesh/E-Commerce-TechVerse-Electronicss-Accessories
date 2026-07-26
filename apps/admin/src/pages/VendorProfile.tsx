@@ -4,12 +4,19 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
-import { Card, CardContent, CardHeader, CardTitle, Button } from '@techverse/ui';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Button,
+} from '@techverse/ui';
+import toast from 'react-hot-toast';
 
 export const VendorProfile: React.FC = () => {
   const queryClient = useQueryClient();
   const { register, handleSubmit, setValue } = useForm();
-  
+
   const { user } = useSelector((state: RootState) => state.auth);
 
   // Fetch Vendor Profile
@@ -17,16 +24,19 @@ export const VendorProfile: React.FC = () => {
     queryKey: ['vendorProfile'],
     queryFn: async () => {
       const res = await axios.get('/api/vendors/profile', {
-        headers: { Authorization: `Bearer ${user?.token}` }
+        headers: { Authorization: `Bearer ${user?.token}` },
       });
       return res.data.data;
-    }
+    },
   });
 
   useEffect(() => {
     if (data) {
       setValue('storeName', data.storeName);
-      setValue('businessDetails', data.businessAddress?.street || data.businessDetails);
+      setValue(
+        'businessDetails',
+        data.businessAddress?.street || data.businessDetails
+      );
       setValue('gstNumber', data.gstNumber);
       setValue('logo', data.logo);
       setValue('banner', data.banner);
@@ -34,28 +44,36 @@ export const VendorProfile: React.FC = () => {
   }, [data, setValue]);
 
   const updateMutation = useMutation({
-    mutationFn: (updatedData: any) => axios.put('/api/vendors/profile', updatedData, {
-      headers: { Authorization: `Bearer ${user?.token}` }
-    }),
+    mutationFn: (updatedData: any) =>
+      axios.put('/api/vendors/profile', updatedData, {
+        headers: { Authorization: `Bearer ${user?.token}` },
+      }),
     onSuccess: () => {
-      alert('Profile updated successfully!');
+      toast.success('Profile updated successfully!');
       queryClient.invalidateQueries({ queryKey: ['vendorProfile'] });
     },
     onError: (err: any) => {
-      alert(err.response?.data?.message || err.message || 'Update failed');
-    }
+      toast.error(
+        err.response?.data?.message || err.message || 'Update failed'
+      );
+    },
   });
 
   const onSubmit = (formData: any) => {
     updateMutation.mutate(formData);
   };
 
-  if (isLoading) return <div className="dark:text-white">Loading profile...</div>;
-  if (error) return (
-    <div className="text-red-500">
-      Failed to load profile. Reason: {(error as any)?.response?.data?.message || (error as any)?.message || 'Unknown error'}
-    </div>
-  );
+  if (isLoading)
+    return <div className="dark:text-white">Loading profile...</div>;
+  if (error)
+    return (
+      <div className="text-red-500">
+        Failed to load profile. Reason:{' '}
+        {(error as any)?.response?.data?.message ||
+          (error as any)?.message ||
+          'Unknown error'}
+      </div>
+    );
 
   return (
     <div className="space-y-6">
@@ -70,31 +88,66 @@ export const VendorProfile: React.FC = () => {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium dark:text-white">Store Name</label>
-              <input {...register('storeName')} required className="w-full px-3 py-2 border rounded-md dark:bg-dark-700 dark:border-dark-600 dark:text-white" />
-            </div>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium dark:text-white">Business Details / Address</label>
-              <textarea {...register('businessDetails')} rows={3} className="w-full px-3 py-2 border rounded-md dark:bg-dark-700 dark:border-dark-600 dark:text-white" />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium dark:text-white">GST Number (Optional)</label>
-              <input {...register('gstNumber')} type="text" className="w-full px-3 py-2 border rounded-md dark:bg-dark-700 dark:border-dark-600 dark:text-white" placeholder="e.g. 22AAAAA0000A1Z5" />
+              <label className="text-sm font-medium dark:text-white">
+                Store Name
+              </label>
+              <input
+                {...register('storeName')}
+                required
+                className="w-full px-3 py-2 border rounded-md dark:bg-dark-700 dark:border-dark-600 dark:text-white"
+              />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium dark:text-white">Logo URL</label>
-              <input {...register('logo')} type="url" className="w-full px-3 py-2 border rounded-md dark:bg-dark-700 dark:border-dark-600 dark:text-white" />
+              <label className="text-sm font-medium dark:text-white">
+                Business Details / Address
+              </label>
+              <textarea
+                {...register('businessDetails')}
+                rows={3}
+                className="w-full px-3 py-2 border rounded-md dark:bg-dark-700 dark:border-dark-600 dark:text-white"
+              />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium dark:text-white">Banner URL</label>
-              <input {...register('banner')} type="url" className="w-full px-3 py-2 border rounded-md dark:bg-dark-700 dark:border-dark-600 dark:text-white" />
+              <label className="text-sm font-medium dark:text-white">
+                GST Number (Optional)
+              </label>
+              <input
+                {...register('gstNumber')}
+                type="text"
+                className="w-full px-3 py-2 border rounded-md dark:bg-dark-700 dark:border-dark-600 dark:text-white"
+                placeholder="e.g. 22AAAAA0000A1Z5"
+              />
             </div>
 
-            <Button type="submit" variant="primary" disabled={updateMutation.isPending}>
+            <div className="space-y-2">
+              <label className="text-sm font-medium dark:text-white">
+                Logo URL
+              </label>
+              <input
+                {...register('logo')}
+                type="url"
+                className="w-full px-3 py-2 border rounded-md dark:bg-dark-700 dark:border-dark-600 dark:text-white"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium dark:text-white">
+                Banner URL
+              </label>
+              <input
+                {...register('banner')}
+                type="url"
+                className="w-full px-3 py-2 border rounded-md dark:bg-dark-700 dark:border-dark-600 dark:text-white"
+              />
+            </div>
+
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={updateMutation.isPending}
+            >
               {updateMutation.isPending ? 'Saving...' : 'Save Profile'}
             </Button>
           </form>

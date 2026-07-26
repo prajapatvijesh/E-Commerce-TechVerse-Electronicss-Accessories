@@ -1,7 +1,24 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Search, ShoppingCart, User, Heart, Send, MapPin, ArrowLeft, Facebook, Twitter, Instagram, Linkedin, Moon, Sun } from 'lucide-react';
-import { Button } from '@techverse/ui';
+import {
+  Menu,
+  X,
+  Search,
+  ShoppingCart,
+  User,
+  Heart,
+  Send,
+  MapPin,
+  ArrowLeft,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Moon,
+  Sun,
+} from 'lucide-react';
+import { Button, useConfirm, Tooltip } from '@techverse/ui';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { useQuery } from '@tanstack/react-query';
@@ -17,6 +34,7 @@ export const MainLayout: React.FC = () => {
   const cartItems = useSelector((state: RootState) => state.cart.cartItems);
   const user = useSelector((state: RootState) => state.auth.user);
   const { t, language, setLanguage } = useLanguage();
+  const { confirm } = useConfirm();
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -35,19 +53,25 @@ export const MainLayout: React.FC = () => {
     }
   }, [isDarkMode]);
 
+  React.useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }, []);
+
   const { data: cmsData } = useQuery({
     queryKey: ['homepage-settings'],
     queryFn: async () => {
       const res = await axios.get('/api/homepage-settings');
       return res.data.data;
-    }
+    },
   });
 
   const { data: wishlistData } = useQuery({
     queryKey: ['wishlist', user?._id],
     queryFn: async () => {
       const { data } = await axios.get('/api/wishlist', {
-        headers: { Authorization: `Bearer ${user?.token}` }
+        headers: { Authorization: `Bearer ${user?.token}` },
       });
       return data;
     },
@@ -63,151 +87,291 @@ export const MainLayout: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <div className="flex items-center space-x-2 text-primary-100">
             <MapPin size={14} />
-            <span>Delivering to <strong className="text-white">Jodhpur, Rajasthan 342001</strong></span>
+            <span>
+              Delivering to{' '}
+              <strong className="text-white">Jodhpur, Rajasthan 342001</strong>
+            </span>
           </div>
           <div className="hidden sm:flex space-x-4 text-primary-200">
             <span>Free Shipping on orders over ₹1000</span>
-            <span className="border-l border-primary-700 pl-4">Support: support@techverse.com</span>
+            <span className="border-l border-primary-700 pl-4">
+              Support: support@techverse.com
+            </span>
           </div>
         </div>
       </div>
-      
+
       {/* Header */}
       <header className="sticky top-4 z-50 mx-4 sm:mx-6 lg:mx-auto max-w-7xl mb-8 transition-all duration-300">
         <div className="bg-white/70 dark:bg-dark-800/70 backdrop-blur-xl border border-white/40 dark:border-dark-700/50 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)]">
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16 items-center">
               {/* Logo & Main Nav */}
-            <div className="flex items-center space-x-2 sm:space-x-4 lg:space-x-8">
-              {location.pathname !== '/' && (
-                <button 
-                  onClick={() => navigate(-1)} 
-                  className="p-1 sm:hidden text-gray-600 dark:text-gray-300 hover:text-primary-600 transition-colors"
-                  aria-label="Go back"
+              <div className="flex items-center space-x-2 sm:space-x-4 lg:space-x-8">
+                {location.pathname !== '/' && (
+                  <button
+                    onClick={() => navigate(-1)}
+                    className="p-1 sm:hidden text-gray-600 dark:text-gray-300 hover:text-primary-600 transition-colors"
+                    aria-label="Go back"
+                  >
+                    <ArrowLeft size={24} />
+                  </button>
+                )}
+                <Link
+                  to="/"
+                  className="flex-shrink-0 flex items-center"
+                  onClick={() => window.scrollTo(0, 0)}
                 >
-                  <ArrowLeft size={24} />
-                </button>
-              )}
-              <Link to="/" className="flex-shrink-0 flex items-center" onClick={() => window.scrollTo(0, 0)}>
-                <span className="text-2xl font-bold text-primary-600 tracking-tighter">TechVerse</span>
-              </Link>
-              <nav className="hidden lg:flex items-center space-x-6 text-sm font-medium text-gray-700 dark:text-gray-300">
-                <Link to="/" className="hover:text-primary-600 transition-colors font-semibold" onClick={() => window.scrollTo(0, 0)}>{t('home')}</Link>
-                <Link to="/shop" className="hover:text-primary-600 transition-colors font-semibold">{t('shop')}</Link>
-                <Link to="/vendors" className="hover:text-primary-600 transition-colors font-semibold">{t('vendors')}</Link>
-                <div className="relative group py-4">
-                  <Link to="/offers" className="hover:text-primary-600 transition-colors font-semibold">Offers</Link>
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-[520px] bg-white/90 dark:bg-dark-800/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_40px_rgb(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] border border-gray-100/50 dark:border-dark-700/50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-4 group-hover:translate-y-0 p-4 grid grid-cols-2 gap-4 z-[100]">
-                    <div className="absolute -top-6 left-0 w-full h-8 bg-transparent"></div>
-                    <div className="block bg-gradient-to-br from-primary-600 to-blue-500 rounded-2xl p-6 text-white relative overflow-hidden transition-all duration-300 group/card">
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-3xl group-hover/card:scale-150 transition-transform duration-700"></div>
-                      <h4 className="font-bold text-xl mb-1 relative z-10">Summer Sale</h4>
-                      <p className="text-sm text-primary-100 mb-6 relative z-10">Up to 40% off on premium laptops & accessories</p>
-                      <Link to="/shop" className="text-sm font-bold bg-white/20 text-white hover:bg-white hover:text-primary-600 px-4 py-2 rounded-xl backdrop-blur-md transition-all inline-block relative z-10 cursor-pointer">Shop Now</Link>
-                    </div>
-                    <div className="block bg-gradient-to-br from-purple-600 to-pink-500 rounded-2xl p-6 text-white relative overflow-hidden transition-all duration-300 group/card">
-                      <div className="absolute bottom-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-3xl group-hover/card:scale-150 transition-transform duration-700"></div>
-                      <h4 className="font-bold text-xl mb-1 relative z-10">Bank Offers</h4>
-                      <p className="text-sm text-purple-100 mb-6 relative z-10">Extra 10% instant cashback on selected credit cards</p>
-                      <Link to="/offers" className="text-sm font-bold bg-white/20 text-white hover:bg-white hover:text-purple-600 px-4 py-2 rounded-xl backdrop-blur-md transition-all inline-block relative z-10 cursor-pointer">Explore Deals</Link>
+                  <span className="text-2xl font-bold text-primary-600 tracking-tighter">
+                    TechVerse
+                  </span>
+                </Link>
+                <nav className="hidden lg:flex items-center space-x-6 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Link
+                    to="/"
+                    className="hover:text-primary-600 transition-colors font-semibold"
+                    onClick={() => window.scrollTo(0, 0)}
+                  >
+                    {t('home')}
+                  </Link>
+                  <Link
+                    to="/shop"
+                    className="hover:text-primary-600 transition-colors font-semibold"
+                  >
+                    {t('shop')}
+                  </Link>
+                  <Link
+                    to="/vendors"
+                    className="hover:text-primary-600 transition-colors font-semibold"
+                  >
+                    {t('vendors')}
+                  </Link>
+                  <div className="relative group py-4">
+                    <Link
+                      to="/offers"
+                      className="hover:text-primary-600 transition-colors font-semibold"
+                    >
+                      Offers
+                    </Link>
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-[520px] bg-white/90 dark:bg-dark-800/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_40px_rgb(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] border border-gray-100/50 dark:border-dark-700/50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-4 group-hover:translate-y-0 p-4 grid grid-cols-2 gap-4 z-[100]">
+                      <div className="absolute -top-6 left-0 w-full h-8 bg-transparent"></div>
+                      <div className="block bg-gradient-to-br from-primary-600 to-blue-500 rounded-2xl p-6 text-white relative overflow-hidden transition-all duration-300 group/card">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-3xl group-hover/card:scale-150 transition-transform duration-700"></div>
+                        <h4 className="font-bold text-xl mb-1 relative z-10">
+                          Summer Sale
+                        </h4>
+                        <p className="text-sm text-primary-100 mb-6 relative z-10">
+                          Up to 40% off on premium laptops & accessories
+                        </p>
+                        <Link
+                          to="/shop"
+                          className="text-sm font-bold bg-white/20 text-white hover:bg-white hover:text-primary-600 px-4 py-2 rounded-xl backdrop-blur-md transition-all inline-block relative z-10 cursor-pointer"
+                        >
+                          Shop Now
+                        </Link>
+                      </div>
+                      <div className="block bg-gradient-to-br from-purple-600 to-pink-500 rounded-2xl p-6 text-white relative overflow-hidden transition-all duration-300 group/card">
+                        <div className="absolute bottom-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-3xl group-hover/card:scale-150 transition-transform duration-700"></div>
+                        <h4 className="font-bold text-xl mb-1 relative z-10">
+                          Bank Offers
+                        </h4>
+                        <p className="text-sm text-purple-100 mb-6 relative z-10">
+                          Extra 10% instant cashback on selected credit cards
+                        </p>
+                        <Link
+                          to="/offers"
+                          className="text-sm font-bold bg-white/20 text-white hover:bg-white hover:text-purple-600 px-4 py-2 rounded-xl backdrop-blur-md transition-all inline-block relative z-10 cursor-pointer"
+                        >
+                          Explore Deals
+                        </Link>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <Link to="/about" className="hover:text-primary-600 transition-colors font-semibold">About</Link>
-                <Link to="/contact" className="hover:text-primary-600 transition-colors font-semibold">Contact</Link>
-              </nav>
-            </div>
+                  <Link
+                    to="/about"
+                    className="hover:text-primary-600 transition-colors font-semibold"
+                  >
+                    About
+                  </Link>
+                  <Link
+                    to="/contact"
+                    className="hover:text-primary-600 transition-colors font-semibold"
+                  >
+                    Contact
+                  </Link>
+                </nav>
+              </div>
 
-            {/* Search Bar */}
-            <div className="hidden sm:flex flex-1 max-w-2xl mx-8">
-              <form 
-                className="relative w-full"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  const form = e.target as HTMLFormElement;
-                  const keyword = (form.elements.namedItem('search') as HTMLInputElement).value;
-                  if (keyword.trim()) {
-                    window.location.href = `/shop?keyword=${encodeURIComponent(keyword.trim())}`;
-                  }
-                }}
-              >
-                <input
-                  type="text"
-                  name="search"
-                  placeholder={t('search_placeholder')}
-                  className="w-full bg-white/50 dark:bg-dark-900/50 backdrop-blur-sm border border-gray-200/50 dark:border-dark-700/50 focus:bg-white dark:focus:bg-dark-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 rounded-xl pl-10 pr-4 py-2 text-sm dark:text-white transition-all shadow-inner"
-                />
-                <button type="submit" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-500">
-                  <Search size={18} />
+              {/* Search Bar */}
+              <div className="hidden sm:flex flex-1 max-w-2xl mx-8">
+                <form
+                  className="relative w-full"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const form = e.target as HTMLFormElement;
+                    const keyword = (
+                      form.elements.namedItem('search') as HTMLInputElement
+                    ).value;
+                    if (keyword.trim()) {
+                      window.location.href = `/shop?keyword=${encodeURIComponent(keyword.trim())}`;
+                    }
+                  }}
+                >
+                  <input
+                    type="text"
+                    name="search"
+                    placeholder={t('search_placeholder')}
+                    className="w-full bg-white/50 dark:bg-dark-900/50 backdrop-blur-sm border border-gray-200/50 dark:border-dark-700/50 focus:bg-white dark:focus:bg-dark-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 rounded-xl pl-10 pr-4 py-2 text-sm dark:text-white transition-all shadow-inner"
+                  />
+                  <button
+                    type="submit"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-500"
+                  >
+                    <Search size={18} />
+                  </button>
+                </form>
+              </div>
+
+              {/* Nav Actions */}
+              <div className="flex items-center space-x-2 sm:space-x-4">
+                <button
+                  onClick={() => setIsDarkMode(!isDarkMode)}
+                  className="p-1 sm:p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all"
+                  title="Toggle Theme"
+                >
+                  {isDarkMode ? (
+                    <Sun size={20} className="sm:w-[22px] sm:h-[22px]" />
+                  ) : (
+                    <Moon size={20} className="sm:w-[22px] sm:h-[22px]" />
+                  )}
                 </button>
-              </form>
-            </div>
 
-            {/* Nav Actions */}
-            <div className="flex items-center space-x-2 sm:space-x-4">
-            
-              <button 
-                onClick={() => setIsDarkMode(!isDarkMode)} 
-                className="p-1 sm:p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all"
-                title="Toggle Theme"
-              >
-                {isDarkMode ? <Sun size={20} className="sm:w-[22px] sm:h-[22px]" /> : <Moon size={20} className="sm:w-[22px] sm:h-[22px]" />}
-              </button>
+                {user && <NotificationDropdown />}
 
-              {user && <NotificationDropdown />}
+                <Tooltip content="Wishlist" position="bottom">
+                  <Link
+                    to="/wishlist"
+                    className="p-2 sm:p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-xl transition-colors relative group"
+                  >
+                    <motion.div
+                      key={wishlistItemsCount}
+                      initial={{ scale: 1.5, color: '#ec4899' }}
+                      animate={{ scale: 1, color: 'currentColor' }}
+                      transition={{
+                        type: 'spring',
+                        stiffness: 400,
+                        damping: 10,
+                      }}
+                    >
+                      <Heart
+                        size={20}
+                        className="sm:w-[22px] sm:h-[22px] group-hover:text-primary-600 transition-colors"
+                      />
+                    </motion.div>
+                    <AnimatePresence>
+                      {wishlistItemsCount > 0 && (
+                        <motion.span
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0, opacity: 0 }}
+                          className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white transform translate-x-1/4 -translate-y-1/4 bg-gradient-to-r from-red-500 to-pink-500 rounded-full shadow-sm"
+                        >
+                          {wishlistItemsCount}
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </Link>
+                </Tooltip>
 
-              <Link to="/wishlist" className="relative p-1 sm:p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all hidden sm:block">
-                <Heart size={20} className="sm:w-[22px] sm:h-[22px]" />
-                {wishlistItemsCount > 0 && (
-                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white transform translate-x-1/4 -translate-y-1/4 bg-gradient-to-r from-red-500 to-pink-500 rounded-full shadow-sm">
-                    {wishlistItemsCount}
-                  </span>
-                )}
-              </Link>
-              <Link to="/cart" className="relative p-1 sm:p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all">
-                <ShoppingCart size={20} className="sm:w-[22px] sm:h-[22px]" />
-                {cartItems.length > 0 && (
-                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white transform translate-x-1/4 -translate-y-1/4 bg-gradient-to-r from-primary-500 to-emerald-400 rounded-full shadow-sm">
-                    {cartItems.length}
-                  </span>
-                )}
-              </Link>
-              {user ? (
-                <div className="flex items-center space-x-2">
-                  <Link to="/dashboard">
-                    <Button variant="ghost" className="hidden sm:flex items-center space-x-2">
+                <Tooltip content="Shopping Cart" position="bottom">
+                  <Link
+                    to="/cart"
+                    className="p-2 sm:p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-xl transition-colors relative group"
+                  >
+                    <motion.div
+                      key={cartItems.length}
+                      initial={{ scale: 1.5, rotate: -10, color: '#10b981' }}
+                      animate={{ scale: 1, rotate: 0, color: 'currentColor' }}
+                      transition={{
+                        type: 'spring',
+                        stiffness: 400,
+                        damping: 10,
+                      }}
+                    >
+                      <ShoppingCart
+                        size={20}
+                        className="sm:w-[22px] sm:h-[22px] group-hover:text-primary-600 transition-colors"
+                      />
+                    </motion.div>
+                    <AnimatePresence>
+                      {cartItems.length > 0 && (
+                        <motion.span
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0, opacity: 0 }}
+                          className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white transform translate-x-1/4 -translate-y-1/4 bg-gradient-to-r from-primary-500 to-emerald-400 rounded-full shadow-sm"
+                        >
+                          {cartItems.length}
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </Link>
+                </Tooltip>
+
+                {user ? (
+                  <div className="flex items-center space-x-2">
+                    <Link to="/dashboard">
+                      <Button
+                        variant="ghost"
+                        className="hidden sm:flex items-center space-x-2"
+                      >
+                        <User size={20} />
+                        <span>{user.name}</span>
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="outline"
+                      className="hidden sm:flex text-red-500 border-red-200 hover:bg-red-50"
+                      onClick={async () => {
+                        const isConfirmed = await confirm({
+                          title: 'Logout',
+                          message: 'Are you sure you want to log out?',
+                          confirmText: 'Logout',
+                          variant: 'danger',
+                        });
+                        if (isConfirmed) {
+                          localStorage.removeItem('user');
+                          navigate('/login');
+                        }
+                      }}
+                    >
+                      Logout
+                    </Button>
+                  </div>
+                ) : (
+                  <Link to="/login">
+                    <Button
+                      variant="ghost"
+                      className="hidden sm:flex items-center space-x-2"
+                    >
                       <User size={20} />
-                      <span>{user.name}</span>
+                      <span>Sign In</span>
                     </Button>
                   </Link>
-                  <Button 
-                    variant="outline" 
-                    className="hidden sm:flex text-red-500 border-red-200 hover:bg-red-50"
-                    onClick={() => {
-                      localStorage.removeItem('user');
-                      navigate('/login');
-                    }}
-                  >
-                    Logout
-                  </Button>
-                </div>
-              ) : (
-                <Link to="/login">
-                  <Button variant="ghost" className="hidden sm:flex items-center space-x-2">
-                    <User size={20} />
-                    <span>Sign In</span>
-                  </Button>
-                </Link>
-              )}
-              <button 
-                className="lg:hidden p-1 sm:p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-xl transition-colors ml-1"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              >
-                {isMobileMenuOpen ? <X size={22} className="sm:w-[24px] sm:h-[24px]" /> : <Menu size={22} className="sm:w-[24px] sm:h-[24px]" />}
-              </button>
+                )}
+                <button
+                  className="lg:hidden p-1 sm:p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-xl transition-colors ml-1"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                >
+                  {isMobileMenuOpen ? (
+                    <X size={22} className="sm:w-[24px] sm:h-[24px]" />
+                  ) : (
+                    <Menu size={22} className="sm:w-[24px] sm:h-[24px]" />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </header>
 
@@ -216,18 +380,25 @@ export const MainLayout: React.FC = () => {
         <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm lg:hidden transition-opacity">
           <div className="fixed inset-y-0 right-0 w-4/5 max-w-sm bg-white dark:bg-dark-800 shadow-2xl p-6 flex flex-col transform transition-transform duration-300 ease-in-out translate-x-0">
             <div className="flex items-center justify-between mb-8">
-              <span className="text-2xl font-bold text-primary-600 tracking-tighter">TechVerse</span>
-              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+              <span className="text-2xl font-bold text-primary-600 tracking-tighter">
+                TechVerse
+              </span>
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
                 <X size={24} />
               </button>
             </div>
-            
-            <form 
+
+            <form
               className="relative w-full mb-8"
               onSubmit={(e) => {
                 e.preventDefault();
                 const form = e.target as HTMLFormElement;
-                const keyword = (form.elements.namedItem('search') as HTMLInputElement).value;
+                const keyword = (
+                  form.elements.namedItem('search') as HTMLInputElement
+                ).value;
                 if (keyword.trim()) {
                   window.location.href = `/shop?keyword=${encodeURIComponent(keyword.trim())}`;
                 }
@@ -239,33 +410,87 @@ export const MainLayout: React.FC = () => {
                 placeholder="Search..."
                 className="w-full bg-gray-100 dark:bg-dark-700 border-transparent focus:bg-white dark:focus:bg-dark-800 focus:border-primary-500 focus:ring-2 focus:ring-primary-500 rounded-lg pl-10 pr-4 py-3 text-sm dark:text-white"
               />
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Search
+                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              />
             </form>
 
             <nav className="flex flex-col space-y-4 mb-8">
-              <Link to="/" onClick={() => { setIsMobileMenuOpen(false); window.scrollTo(0, 0); }} className="text-lg font-medium text-gray-900 dark:text-white hover:text-primary-600">Home</Link>
-              <Link to="/shop" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-gray-900 dark:text-white hover:text-primary-600">Categories</Link>
-              <Link to="/vendors" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-gray-900 dark:text-white hover:text-primary-600">Vendors</Link>
-              <Link to="/offers" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-gray-900 dark:text-white hover:text-primary-600">Offers</Link>
-              <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-gray-900 dark:text-white hover:text-primary-600">About</Link>
-              <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-gray-900 dark:text-white hover:text-primary-600">Contact</Link>
+              <Link
+                to="/"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  window.scrollTo(0, 0);
+                }}
+                className="text-lg font-medium text-gray-900 dark:text-white hover:text-primary-600"
+              >
+                Home
+              </Link>
+              <Link
+                to="/shop"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-lg font-medium text-gray-900 dark:text-white hover:text-primary-600"
+              >
+                Categories
+              </Link>
+              <Link
+                to="/vendors"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-lg font-medium text-gray-900 dark:text-white hover:text-primary-600"
+              >
+                Vendors
+              </Link>
+              <Link
+                to="/offers"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-lg font-medium text-gray-900 dark:text-white hover:text-primary-600"
+              >
+                Offers
+              </Link>
+              <Link
+                to="/about"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-lg font-medium text-gray-900 dark:text-white hover:text-primary-600"
+              >
+                About
+              </Link>
+              <Link
+                to="/contact"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-lg font-medium text-gray-900 dark:text-white hover:text-primary-600"
+              >
+                Contact
+              </Link>
             </nav>
-            
+
             <div className="mt-auto space-y-4">
-              <Link to="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center space-x-3 text-gray-600 dark:text-gray-300">
+              <Link
+                to="/wishlist"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center space-x-3 text-gray-600 dark:text-gray-300"
+              >
                 <Heart size={20} />
-                <span className="font-medium">My Wishlist ({wishlistItemsCount})</span>
+                <span className="font-medium">
+                  My Wishlist ({wishlistItemsCount})
+                </span>
               </Link>
               {user ? (
                 <>
-                  <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button variant="primary" className="w-full justify-center flex items-center space-x-2">
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Button
+                      variant="primary"
+                      className="w-full justify-center flex items-center space-x-2"
+                    >
                       <User size={20} />
                       <span>{user.name}</span>
                     </Button>
                   </Link>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full justify-center text-red-500 border-red-200"
                     onClick={() => {
                       localStorage.removeItem('user');
@@ -277,7 +502,10 @@ export const MainLayout: React.FC = () => {
                 </>
               ) : (
                 <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button variant="primary" className="w-full justify-center flex items-center space-x-2">
+                  <Button
+                    variant="primary"
+                    className="w-full justify-center flex items-center space-x-2"
+                  >
                     <User size={20} />
                     <span>Sign In / Register</span>
                   </Button>
@@ -297,58 +525,158 @@ export const MainLayout: React.FC = () => {
       <footer className="relative bg-white dark:bg-dark-900 overflow-hidden mt-auto">
         {/* Subtle top gradient line */}
         <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gray-200 dark:via-dark-700 to-transparent"></div>
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
             <div className="lg:col-span-4 pr-4">
-              <Link to="/" className="inline-block" onClick={() => window.scrollTo(0,0)}>
-                <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-primary-400 tracking-tighter">TechVerse</span>
+              <Link
+                to="/"
+                className="inline-block"
+                onClick={() => window.scrollTo(0, 0)}
+              >
+                <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-primary-400 tracking-tighter">
+                  TechVerse
+                </span>
               </Link>
               <p className="mt-4 text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                The ultimate destination for premium electronics and accessories. Experience the future of technology with our curated collection of gadgets.
+                The ultimate destination for premium electronics and
+                accessories. Experience the future of technology with our
+                curated collection of gadgets.
               </p>
               <div className="mt-6 space-y-3 text-sm text-gray-500 dark:text-gray-400">
                 <p className="flex items-start space-x-3 group cursor-pointer">
                   <div className="bg-primary-50 dark:bg-primary-900/20 p-2 rounded-lg group-hover:bg-primary-100 dark:group-hover:bg-primary-900/40 transition-colors">
                     <MapPin size={16} className="text-primary-500" />
                   </div>
-                  <span className="mt-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">TechVerse HQ, Jodhpur<br/>Rajasthan 342001, India</span>
+                  <span className="mt-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                    TechVerse HQ, Jodhpur
+                    <br />
+                    Rajasthan 342001, India
+                  </span>
                 </p>
               </div>
               <div className="mt-8">
-                <h3 className="text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3">Language</h3>
+                <h3 className="text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
+                  Language
+                </h3>
                 <div className="inline-flex bg-gray-100 dark:bg-dark-800 p-1 rounded-xl shadow-inner border border-gray-200/50 dark:border-dark-700/50">
-                  <button onClick={() => setLanguage('en')} className={`px-4 py-2 text-xs font-medium rounded-lg transition-all duration-200 ${language === 'en' ? 'bg-white dark:bg-dark-700 shadow-sm text-primary-600 dark:text-primary-400' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'}`}>English</button>
-                  <button onClick={() => setLanguage('hi')} className={`px-4 py-2 text-xs font-medium rounded-lg transition-all duration-200 ${language === 'hi' ? 'bg-white dark:bg-dark-700 shadow-sm text-primary-600 dark:text-primary-400' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'}`}>हिंदी</button>
+                  <button
+                    onClick={() => setLanguage('en')}
+                    className={`px-4 py-2 text-xs font-medium rounded-lg transition-all duration-200 ${language === 'en' ? 'bg-white dark:bg-dark-700 shadow-sm text-primary-600 dark:text-primary-400' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'}`}
+                  >
+                    English
+                  </button>
+                  <button
+                    onClick={() => setLanguage('hi')}
+                    className={`px-4 py-2 text-xs font-medium rounded-lg transition-all duration-200 ${language === 'hi' ? 'bg-white dark:bg-dark-700 shadow-sm text-primary-600 dark:text-primary-400' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'}`}
+                  >
+                    हिंदी
+                  </button>
                 </div>
               </div>
             </div>
-            
+
             <div className="lg:col-span-2">
-              <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Shop</h3>
+              <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+                Shop
+              </h3>
               <ul className="mt-6 space-y-3 text-sm text-gray-500 dark:text-gray-400">
-                <li><Link to="/shop?category=mobiles" onClick={() => window.scrollTo(0,0)} className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">Smartphones</Link></li>
-                <li><Link to="/shop?category=laptops" onClick={() => window.scrollTo(0,0)} className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">Laptops & PCs</Link></li>
-                <li><Link to="/shop?category=gaming-accessories" onClick={() => window.scrollTo(0,0)} className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">Gaming Gear</Link></li>
-                <li><Link to="/shop" onClick={() => window.scrollTo(0,0)} className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">View All</Link></li>
+                <li>
+                  <Link
+                    to="/shop?category=mobiles"
+                    onClick={() => window.scrollTo(0, 0)}
+                    className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform"
+                  >
+                    Smartphones
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/shop?category=laptops"
+                    onClick={() => window.scrollTo(0, 0)}
+                    className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform"
+                  >
+                    Laptops & PCs
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/shop?category=gaming-accessories"
+                    onClick={() => window.scrollTo(0, 0)}
+                    className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform"
+                  >
+                    Gaming Gear
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/shop"
+                    onClick={() => window.scrollTo(0, 0)}
+                    className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform"
+                  >
+                    View All
+                  </Link>
+                </li>
               </ul>
             </div>
-            
+
             <div className="lg:col-span-2">
-              <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Support</h3>
+              <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+                Support
+              </h3>
               <ul className="mt-6 space-y-3 text-sm text-gray-500 dark:text-gray-400">
-                <li><Link to="/contact" className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">Contact Us</Link></li>
-                <li><Link to="/faq" className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">Help Center (FAQ)</Link></li>
-                <li><Link to="/returns" className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform">Returns Policy</Link></li>
-                <li><a href={import.meta.env.VITE_ADMIN_URL || (import.meta.env.DEV ? 'http://localhost:3001' : 'https://techverse-admin-panel.vercel.app/')} className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform flex items-center space-x-1"><span>Vendor Portal</span> <span className="text-[10px] bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400 px-1.5 py-0.5 rounded-full ml-1">Beta</span></a></li>
+                <li>
+                  <Link
+                    to="/contact"
+                    className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform"
+                  >
+                    Contact Us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/faq"
+                    className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform"
+                  >
+                    Help Center (FAQ)
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/returns"
+                    className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform"
+                  >
+                    Returns Policy
+                  </Link>
+                </li>
+                <li>
+                  <a
+                    href={
+                      import.meta.env.VITE_ADMIN_URL ||
+                      (import.meta.env.DEV
+                        ? 'http://localhost:3001'
+                        : 'https://techverse-admin-panel.vercel.app/')
+                    }
+                    className="hover:text-primary-600 dark:hover:text-primary-400 hover:translate-x-1 inline-block transition-transform flex items-center space-x-1"
+                  >
+                    <span>Vendor Portal</span>{' '}
+                    <span className="text-[10px] bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400 px-1.5 py-0.5 rounded-full ml-1">
+                      Beta
+                    </span>
+                  </a>
+                </li>
               </ul>
             </div>
-            
+
             <div className="lg:col-span-4">
-              <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Join our Newsletter</h3>
-              <p className="mt-4 text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Get the latest updates on new products and upcoming sales.</p>
-              <form 
-                className="mt-5 relative group" 
+              <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+                Join our Newsletter
+              </h3>
+              <p className="mt-4 text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                Get the latest updates on new products and upcoming sales.
+              </p>
+              <form
+                className="mt-5 relative group"
                 onSubmit={async (e) => {
                   e.preventDefault();
                   const email = (e.target as any).email.value;
@@ -363,14 +691,17 @@ export const MainLayout: React.FC = () => {
               >
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-primary-500 to-purple-500 rounded-xl opacity-20 group-hover:opacity-40 transition duration-300 blur"></div>
                 <div className="relative flex items-center bg-white dark:bg-dark-800 rounded-xl overflow-hidden border border-gray-200 dark:border-dark-700 shadow-sm focus-within:ring-2 focus-within:ring-primary-500/50">
-                  <input 
-                    type="email" 
-                    name="email" 
-                    placeholder="Enter your email address" 
-                    required 
-                    className="w-full px-4 py-3 text-sm bg-transparent dark:text-white focus:outline-none placeholder-gray-400" 
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter your email address"
+                    required
+                    className="w-full px-4 py-3 text-sm bg-transparent dark:text-white focus:outline-none placeholder-gray-400"
                   />
-                  <button type="submit" className="bg-primary-600 text-white px-5 py-3 hover:bg-primary-700 transition-colors flex items-center justify-center font-medium text-sm">
+                  <button
+                    type="submit"
+                    className="bg-primary-600 text-white px-5 py-3 hover:bg-primary-700 transition-colors flex items-center justify-center font-medium text-sm"
+                  >
                     Subscribe
                     <Send size={14} className="ml-2" />
                   </button>
@@ -378,30 +709,53 @@ export const MainLayout: React.FC = () => {
               </form>
             </div>
           </div>
-          
+
           <div className="border-t border-gray-200/60 dark:border-dark-800/60 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-gray-500 dark:text-gray-400 text-sm">{cmsData?.footerText || '© 2026 TechVerse Marketplace. All rights reserved.'}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              {cmsData?.footerText ||
+                '© 2026 TechVerse Marketplace. All rights reserved.'}
+            </p>
             <div className="flex space-x-4 items-center">
-              <button 
-                onClick={() => setIsDarkMode(!isDarkMode)} 
+              <button
+                onClick={() => setIsDarkMode(!isDarkMode)}
                 className="p-2 mr-4 bg-gray-100 dark:bg-dark-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-full shadow-sm transition-all duration-200"
                 title="Toggle Theme"
               >
                 {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
               </button>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200"
+              >
                 <span className="sr-only">Facebook</span>
                 <Facebook size={18} />
               </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200"
+              >
                 <span className="sr-only">Twitter</span>
                 <Twitter size={18} />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200"
+              >
                 <span className="sr-only">Instagram</span>
                 <Instagram size={18} />
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200">
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-full transition-all duration-200"
+              >
                 <span className="sr-only">LinkedIn</span>
                 <Linkedin size={18} />
               </a>
@@ -409,7 +763,7 @@ export const MainLayout: React.FC = () => {
           </div>
         </div>
       </footer>
-      
+
       {/* Global AI Chatbot */}
       <AIChatbot />
     </div>

@@ -26,10 +26,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(helmet());
-app.use(cors({
-  origin: (origin, callback) => callback(null, true),
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => callback(null, true),
+    credentials: true,
+  })
+);
 app.use(morgan('dev'));
 
 import authRoutes from './routes/authRoutes';
@@ -56,6 +58,7 @@ import payoutRoutes from './routes/payoutRoutes';
 import chatRoutes from './routes/chatRoutes';
 import newsletterRoutes from './routes/newsletterRoutes';
 import contactRoutes from './routes/contactRoutes';
+import bannerRoutes from './routes/bannerRoutes';
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -82,6 +85,7 @@ app.use('/api/payouts', payoutRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/banners', bannerRoutes);
 
 // Socket.io connection
 io.on('connection', (socket) => {

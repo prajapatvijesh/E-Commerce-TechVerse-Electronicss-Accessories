@@ -236,13 +236,19 @@ export const MainLayout: React.FC = () => {
               <div className="flex items-center space-x-2 sm:space-x-4">
                 <button
                   onClick={() => setIsDarkMode(!isDarkMode)}
-                  className="p-1 sm:p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all"
+                  className="flex items-center justify-center p-2 sm:p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-xl transition-colors relative group"
                   title="Toggle Theme"
                 >
                   {isDarkMode ? (
-                    <Sun size={20} className="sm:w-[22px] sm:h-[22px]" />
+                    <Sun
+                      size={20}
+                      className="sm:w-[22px] sm:h-[22px] group-hover:text-primary-600 transition-colors"
+                    />
                   ) : (
-                    <Moon size={20} className="sm:w-[22px] sm:h-[22px]" />
+                    <Moon
+                      size={20}
+                      className="sm:w-[22px] sm:h-[22px] group-hover:text-primary-600 transition-colors"
+                    />
                   )}
                 </button>
 
@@ -251,7 +257,7 @@ export const MainLayout: React.FC = () => {
                 <Tooltip content="Wishlist" position="bottom">
                   <Link
                     to="/wishlist"
-                    className="p-2 sm:p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-xl transition-colors relative group"
+                    className="flex items-center justify-center p-2 sm:p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-xl transition-colors relative group"
                   >
                     <motion.div
                       key={wishlistItemsCount}
@@ -286,7 +292,7 @@ export const MainLayout: React.FC = () => {
                 <Tooltip content="Shopping Cart" position="bottom">
                   <Link
                     to="/cart"
-                    className="p-2 sm:p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-xl transition-colors relative group"
+                    className="flex items-center justify-center p-2 sm:p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-xl transition-colors relative group"
                   >
                     <motion.div
                       key={cartItems.length}

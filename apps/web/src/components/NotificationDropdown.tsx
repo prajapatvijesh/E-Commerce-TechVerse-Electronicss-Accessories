@@ -14,7 +14,10 @@ export const NotificationDropdown: React.FC = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -26,7 +29,7 @@ export const NotificationDropdown: React.FC = () => {
     queryKey: ['notifications'],
     queryFn: async () => {
       const res = await axios.get('/api/notifications', {
-        headers: { Authorization: `Bearer ${user?.token}` }
+        headers: { Authorization: `Bearer ${user?.token}` },
       });
       return res.data.data;
     },
@@ -36,24 +39,32 @@ export const NotificationDropdown: React.FC = () => {
 
   const markAsReadMutation = useMutation({
     mutationFn: async (id: string) => {
-      await axios.put(`/api/notifications/${id}/read`, {}, {
-        headers: { Authorization: `Bearer ${user?.token}` }
-      });
+      await axios.put(
+        `/api/notifications/${id}/read`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${user?.token}` },
+        }
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
-    }
+    },
   });
 
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
-      await axios.put('/api/notifications/read-all', {}, {
-        headers: { Authorization: `Bearer ${user?.token}` }
-      });
+      await axios.put(
+        '/api/notifications/read-all',
+        {},
+        {
+          headers: { Authorization: `Bearer ${user?.token}` },
+        }
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
-    }
+    },
   });
 
   const notifications = notificationsData || [];
@@ -70,13 +81,16 @@ export const NotificationDropdown: React.FC = () => {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 transition-colors focus:outline-none"
+        className="flex items-center justify-center p-2 sm:p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-xl transition-colors relative group focus:outline-none"
       >
-        <Bell size={24} />
+        <Bell
+          size={20}
+          className="sm:w-[22px] sm:h-[22px] group-hover:text-primary-600 transition-colors"
+        />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full animate-pulse border-2 border-white dark:border-dark-800">
+          <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white transform translate-x-1/4 -translate-y-1/4 bg-red-500 rounded-full shadow-sm">
             {unreadCount}
           </span>
         )}
@@ -85,9 +99,11 @@ export const NotificationDropdown: React.FC = () => {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-dark-800 rounded-2xl shadow-xl border border-gray-100 dark:border-dark-700 overflow-hidden z-50">
           <div className="p-4 border-b border-gray-100 dark:border-dark-700 flex justify-between items-center bg-gray-50 dark:bg-dark-900">
-            <h3 className="font-bold text-gray-900 dark:text-white">Notifications</h3>
+            <h3 className="font-bold text-gray-900 dark:text-white">
+              Notifications
+            </h3>
             {unreadCount > 0 && (
-              <button 
+              <button
                 onClick={() => markAllAsReadMutation.mutate()}
                 className="text-xs text-primary-600 hover:text-primary-700 font-medium"
               >
@@ -95,7 +111,7 @@ export const NotificationDropdown: React.FC = () => {
               </button>
             )}
           </div>
-          
+
           <div className="max-h-96 overflow-y-auto">
             {notifications.length === 0 ? (
               <div className="p-8 text-center text-gray-500 dark:text-gray-400">
@@ -105,7 +121,7 @@ export const NotificationDropdown: React.FC = () => {
             ) : (
               <div className="divide-y divide-gray-100 dark:divide-dark-700">
                 {notifications.map((notification: any) => (
-                  <Link 
+                  <Link
                     key={notification._id}
                     to={notification.link || '#'}
                     onClick={() => handleNotificationClick(notification)}
@@ -128,10 +144,14 @@ export const NotificationDropdown: React.FC = () => {
                         )}
                       </div>
                       <div className="flex-1">
-                        <p className={`text-sm ${!notification.isRead ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}>
+                        <p
+                          className={`text-sm ${!notification.isRead ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}
+                        >
                           {notification.title}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">{notification.message}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {notification.message}
+                        </p>
                         <p className="text-[10px] text-gray-400 mt-2">
                           {new Date(notification.createdAt).toLocaleString()}
                         </p>

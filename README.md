@@ -42,7 +42,7 @@
 
 ## Screenshots
 
-*(Add your screenshots here before submitting)*
+
 
 - **Homepage & Hero Section**: `![Homepage](./screenshots/home.png)`
 - **Shop & Glassmorphism Filters**: `![Shop](./screenshots/shop.png)`
